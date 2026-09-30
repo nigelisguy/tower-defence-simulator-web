@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDS Web Fangame</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="appContainer">
+        <!-- Toast Notification Banner Container -->
+        <div id="toastContainer"></div>
+        <div id="mainMenuScreen">
+            <!-- Main Menu Header -->
+            <div class="menu-header">
+                <div class="player-identity">
+                    <div class="avatar-badge">🚧</div>
+                    <div class="player-meta">
+                        <div class="player-name" id="menuPlayerName">Guest</div>
+                        <div style="font-size:11px; color:#38bdf8; font-weight:800;" id="menuPlayerLevel">Level 1</div>
+                        <div class="level-progress-bar">
+                            <div class="level-progress-fill" id="menuXpFill" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="currency-bar">
+                    <div class="currency-pill">
+                        <span class="currency-label">COINS</span>
+                        <div class="currency-value-row coins">
+                            <span id="menuCoins">2,500</span>
+                        </div>
+                    </div>
+                    <div class="currency-pill">
+                        <span class="currency-label">GEMS</span>
+                        <div class="currency-value-row gems">
+                            <span>💎</span>
+                            <span id="menuGems">50</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Menu Body (Nav + Views) -->
+            <div class="menu-body">
+                <!-- Left Nav Bar -->
+                <div class="menu-nav">
+                    <button class="nav-btn active" onclick="switchMenuTab('play', this)">PLAY</button>
+                    <button class="nav-btn" onclick="switchMenuTab('inventory', this)">INVENTORY</button>
+                    <button class="nav-btn" onclick="switchMenuTab('play', this)">INDEX 🚧</button>
+                    <button class="nav-btn" onclick="switchMenuTab('shop', this)">SHOP</button>
+                    <button class="nav-btn" onclick="switchMenuTab('codes', this)">CODES</button>
+                    <button class="nav-btn" onclick="switchMenuTab('play', this)">SKILL TREE 🚧</button>
+                    <button class="nav-btn" onclick="switchMenuTab('play', this)">UPDATE LOG 🚧</button>
+                    <button class="nav-btn" onclick="switchMenuTab('play', this)">SETTINGS 🚧</button>
+                    <button class="nav-btn" onclick="switchMenuTab('play', this)">??? 🚧</button>
+                    <button class="nav-btn" onclick="resetPlayerProfile()">RESET PROFILE</button>
+
+                    <script>
+                    function resetPlayerProfile() {
+                        if (!confirm('Nuke Profile? Resetted data is unrecoverable! Also, the Commander will be disappointed at your retirement. (Will relocate to settings in future update!)')) {
+                            return;
+                        }
+
+                        playerProfile.resetProfile()
+                        location.reload();
+                    }
+                    </script>
+                </div>
+
+                <!-- Main Content Pane -->
+                <div class="menu-content">
+                    <div id="tabPlay" class="tab-pane">
+                        <div class="section-title">NORMAL</div>
+
+                        <div class="gamemode-buttons-grid" id="elevatorsGrid">
+                        </div>
+                        <div class="section-title">ARCADE 🚧</div>
+                    </div>
+
+                    <div id="tabInventory" class="tab-pane hidden">
+                        <div id="inventoryHeroContainer"></div>
+
+                        <div class="loadout-bar-container">
+                            <div style="font-size:13px; font-weight:800; color:#38bdf8;">EQUIPPED LOADOUT</div>
+                            <div class="loadout-slots-grid" id="loadoutSlotsGrid">
+                                <!-- 5 Slots populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Unlocked Towers Selection -->
+                        <div style="margin-top:10px;" class="section-title">UNLOCKED TOWERS</div>
+                        <div class="unlocked-towers-grid" id="unlockedTowersGrid">
+                            <!-- Unlocked towers list populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: SHOP (Towers & Consumables) -->
+                    <div id="tabShop" class="tab-pane hidden">
+                        <div class="section-title">🛒 TOWERS SHOP</div>
+                        <div class="shop-grid" id="towersShopGrid">
+                            <!-- Towers for purchase populated via JS -->
+                        </div>
+
+                        <div style="margin-top:25px;" class="section-title">CONSUMABLES</div>
+                        <div class="shop-grid" id="consumablesShopGrid">
+                            <!-- Consumables for purchase populated via JS -->
+                        </div>
+
+                        <div style="margin-top:25px;" class="section-title">CRATES</div>
+                        <div class="shop-grid" id="skinCratesShopGrid">
+                            <!-- Skin crates populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: CODES -->
+                    <div id="tabCodes" class="tab-pane hidden">
+                        <div class="section-title">PROMO CODES</div>
+
+                        <div style="display:flex; gap:12px; max-width:450px; margin-top:15px;">
+                            <input type="text" id="promoCodeInput" placeholder="Enter promo code..." style="flex:1; padding:12px; border-radius:8px; border:2px solid var(--panel-border); background:rgba(30,41,59,0.8); color:#fff; font-size:15px; font-weight:700;">
+                            <button class="btn-start" onclick="submitPromoCode()">REDEEM</button>
+                        </div>
+                        <div style="margin-top:20px; font-size:12px; color:#64748b;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- IN-GAME MATCH INTERFACE                                   -->
+        <!-- ========================================================= -->
+        <div id="inGameUI" class="hidden">
+            <div class="in-game-left-panel">
+                <div class="brand">
+                    <span></span> 0.0.1
+                </div>
+
+                <div class="hud-stats-vertical">
+                    <div class="hud-pill cash">
+                        <span class="hud-pill-label">CASH</span>
+                        <div class="hud-pill-val" style="color:var(--accent-green);">
+                            <img src="assets/ui/variables/money.svg" class="svg-icon" alt="Cash">
+                            <span id="hudCash">$500</span>
+                        </div>
+                    </div>
+
+                    <div class="hud-pill hp">
+                        <span class="hud-pill-label">HEALTH</span>
+                        <div class="hud-pill-val" style="color:var(--accent-red);">
+                            <span>❤️</span>
+                            <span id="hudHp">100 / 100</span>
+                        </div>
+                    </div>
+
+                    <div class="hud-pill wave">
+                        <span class="hud-pill-label">WAVE</span>
+                        <div class="hud-pill-val" style="color:var(--accent-yellow);">
+                            <img src="assets/ui/variables/wave.svg" class="svg-icon" alt="Wave">
+                            <span id="hudWave">0 / 30</span>
+                        </div>
+                        <span id="hudWaveTimer" style="font-size:10px; color:#facc15;"></span>
+                    </div>
+
+                    <div class="hud-pill tower">
+                        <span class="hud-pill-label">TOWERS</span>
+                        <div class="hud-pill-val" style="color:var(--accent-blue);">
+                            <img src="assets/ui/variables/tower.svg" class="svg-icon" alt="Towers">
+                            <span id="hudTowerCount">0/40</span>
+                        </div>
+                    </div>
+
+                    <div class="hud-pill">
+                        <span class="hud-pill-label">MODE</span>
+                        <div class="hud-pill-val" style="color:var(--accent-purple);" id="hudDifficulty">Intermediate</div>
+                    </div>
+                </div>
+                <div class="ability-hotkeys-heading">ABILITIES</div>
+                <div id="abilityHotkeysPanel" class="ability-hotkeys-panel"></div>
+            </div>
+
+            <div class="in-game-top-actions">
+                <button id="btnGameSpeed" class="btn-speed" onclick="toggleGameSpeed()">⚡ 1x</button>
+                <button id="btnMuteAudio" class="btn-speed" onclick="toggleAudioMute()">🔊</button>
+                <button id="btnStartWave" class="btn-start" style="padding:6px 12px; font-size:12px;" onclick="handleWaveButtonClick()">START WAVE</button>
+                <button class="btn-sell" style="padding:6px 12px; font-size:12px;" onclick="returnToMainMenu()">LEAVE</button>
+            </div>
+
+            <div id="canvasContainer" style="flex:1; position:relative; display:flex; align-items:center; justify-content:center; background:#020617;">
+                <canvas id="gameCanvas" width="1000" height="650"></canvas>
+
+                <!-- In-Game Bottom Hotbar (Tower Card SVG buttons fill the slot box) -->
+                <div class="in-game-bottom-bar" id="inGameHotbar">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Consumable Hotbar (Bottom Right) -->
+                <div class="consumable-hotbar" id="inGameConsumableHotbar">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Tower Inspect Panel -->
+                <div id="towerInspectPanel" class="hidden">
+                    <div class="inspect-header">
+                        <div class="inspect-title">
+                            <span id="inspectTowerIcon">🔫</span>
+                            <span id="inspectTowerName">Scout (I)</span>
+                        </div>
+                        <span id="inspectTowerPlacement" class="tower-card-type ground">GROUND</span>
+                    </div>
+
+                    <div id="inspectKills" style="font-size:11px; color:#facc15; margin-bottom:6px;">Kills: 0 | Damage: 0</div>
+                    <div id="inspectTowerStats" class="inspect-stats">Damage: 2 | Speed: 0.5s\nRange: 100</div>
+                    <div id="inspectUpgradePaths" class="inspect-upgrade-paths"></div>
+
+                    <div class="inspect-actions">
+                        <button id="inspectTargetModeBtn" class="btn-target" onclick="cycleSelectedTowerTargeting()">Target: First</button>
+                        <button id="btnUpgradeTower" class="btn-upgrade" onclick="upgradeSelectedTower()">UPGRADE ($100)</button>
+                        <button id="btnRelocateTower" class="btn-upgrade" style="display:none;" onclick="gameEngine.beginTowerRelocation()">RELOCATE TOWER</button>
+                        <button id="btnSellTower" class="btn-sell" onclick="sellSelectedTower()">SELL ($150)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Setup Modal (Random 4 Maps Selector) -->
+    <div id="matchSetupModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-title" id="setupModalTitle">⚔️ ENTERING MATCH</div>
+
+            <div>
+                <h3 style="margin-bottom:10px; color:#38bdf8;">Select Map</h3>
+                <div class="option-grid" id="mapSelectGrid">
+                    <!-- 4 Random non-repeating maps populated via JS -->
+                </div>
+            </div>
+
+            <div>
+                <h3 style="margin-bottom:10px; color:#a855f7;">Game Modifiers</h3>
+                <div style="display:flex; flex-wrap:wrap; gap:10px;" id="gameModifiersList">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button class="btn-sell" style="flex:1; padding:12px;" onclick="closeSetupModal()">CANCEL</button>
+                <button class="btn-start" style="flex:2; padding:12px; font-size:16px;" onclick="confirmStartMatch()">🚀 ENTER MATCH</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victoryOverlay" class="modal-overlay hidden">
+        <div class="modal-card" style="text-align:center;">
+            <div class="modal-title" style="color:#22c55e;">🏆VICTORY!</div>
+            <p id="victoryStats" style="white-space:pre-line; color:#cbd5e1; font-size:16px;"></p>
+            <button class="btn-start" onclick="returnToMainMenu()">RETURN TO LOBBY</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverOverlay" class="modal-overlay hidden">
+        <div class="modal-card" style="text-align:center;">
+            <div class="modal-title" style="color:#ef4444;">💀DEFEAT</div>
+            <p id="gameOverStats" style="white-space:pre-line; color:#cbd5e1; font-size:16px;"></p>
+            <button class="btn-start" onclick="returnToMainMenu()">RETURN TO LOBBY</button>
+        </div>
+    </div>
+
+    <!-- Load Scripts in order -->
+    <script src="js/config.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/tower.js"></script>
+    <script src="js/projectile.js"></script>
+    <script src="js/waves.js"></script>
+    <script src="js/game.js"></script>
+
+    <script>
+        let gameEngine = null;
+        let selectedMap = 'simplecity';
+        let selectedDifficulty = 'intermediate';
+        let selectedGameModifiers = [];
+        let activeInventoryTowerKey = 'scout';
+
+        const ALL_MAPS = [
+            { id: 'simplecity', name: 'Simple City (Debug Map)', desc: 'Yeah. Only One Map. For now...' },
+        ];
+
+        window.showToast = function(msg) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.innerText = msg;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 2400);
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            assets.preloadAssets(() => {
+                gameEngine = new GameEngine();
+                updateMainMenuHeader();
+                renderPlayLobbyElevators();
+                renderInventoryTab();
+                renderShopTab();
+                renderGameModifiersList();
+
+                let lastTimestamp = 0;
+                function mainLoop(timestamp) {
+                    if (!lastTimestamp) lastTimestamp = timestamp;
+                    const dt = Math.min(0.1, (timestamp - lastTimestamp) / 1000);
+                    lastTimestamp = timestamp;
+
+                    if (gameEngine && document.getElementById('inGameUI').classList.contains('hidden') === false) {
+                        gameEngine.update(dt);
+                        gameEngine.render();
+                    }
+
+                    requestAnimationFrame(mainLoop);
+                }
+                requestAnimationFrame(mainLoop);
+            });
+        });
+
+        function updateMainMenuHeader() {
+            document.getElementById('menuCoins').innerText = playerProfile.coins.toLocaleString();
+            document.getElementById('menuGems').innerText = playerProfile.gems.toLocaleString();
+            document.getElementById('menuPlayerLevel').innerText = `Level ${playerProfile.level}`;
+            const xpNeeded = playerProfile.level * 500;
+            const fillPct = Math.min(100, Math.round((playerProfile.xp / xpNeeded) * 100));
+            document.getElementById('menuXpFill').style.width = `${fillPct}%`;
+        }
+
+        function switchMenuTab(tabKey, btnEl) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+            if (tabKey === 'play') document.getElementById('tabPlay').classList.remove('hidden');
+            if (tabKey === 'inventory') {
+                renderInventoryTab();
+                document.getElementById('tabInventory').classList.remove('hidden');
+            }
+            if (tabKey === 'shop') {
+                renderShopTab();
+                document.getElementById('tabShop').classList.remove('hidden');
+            }
+            if (tabKey === 'codes') document.getElementById('tabCodes').classList.remove('hidden');
+        }
+
+        function renderPlayLobbyElevators() {
+            const grid = document.getElementById('elevatorsGrid');
+            grid.innerHTML = '';
+
+            Object.keys(DIFFICULTIES).forEach(key => {
+                const diff = DIFFICULTIES[key];
+                const card = document.createElement('div');
+                card.className = 'gamemode-btn-card';
+                card.onclick = () => openMatchSetupModal(key);
+
+                const bgImg = assets.getImage(`menu_${key}`);
+
+                card.innerHTML = `
+                    ${bgImg ? `<img src="${bgImg.src}" class="gamemode-btn-img" alt="${diff.name}">` : `<div style="height:150px; font-weight:900; color:${diff.color};">${diff.name}</div>`}
+                    <div class="gamemode-btn-footer">
+                        <span class="gamemode-reward-text">+$${diff.rewardCoins}</span>
+                        <span style="font-size:11px; font-weight:800; color:${diff.color};">${diff.waves} WAVES</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openMatchSetupModal(diffKey) {
+            selectedDifficulty = diffKey;
+            const diff = DIFFICULTIES[diffKey];
+            document.getElementById('setupModalTitle').innerText = `⚔️ ${diff.name.toUpperCase()} ELEVATOR`;
+
+            populateRandomMapsForMatch();
+            document.getElementById('matchSetupModal').classList.remove('hidden');
+        }
+
+        function populateRandomMapsForMatch() {
+            const grid = document.getElementById('mapSelectGrid');
+            grid.innerHTML = '';
+
+            const shuffled = [...ALL_MAPS].sort(() => 0.5 - Math.random());
+            const selected4 = shuffled.slice(0, 4);
+
+            selectedMap = selected4[0].id;
+
+            selected4.forEach((mapObj, idx) => {
+                const card = document.createElement('div');
+                card.className = `option-card ${idx === 0 ? 'selected' : ''}`;
+                card.onclick = () => selectSetupMap(mapObj.id, card);
+                card.innerHTML = `
+                    <div class="option-card-title">${mapObj.name}</div>
+                    <div class="option-card-desc">${mapObj.desc}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function closeSetupModal() {
+            document.getElementById('matchSetupModal').classList.add('hidden');
+        }
+
+        function selectSetupMap(mapId, el) {
+            document.querySelectorAll('#mapSelectGrid .option-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMap = mapId;
+        }
+
+        function renderGameModifiersList() {
+            const container = document.getElementById('gameModifiersList');
+            container.innerHTML = '';
+            GAME_MODIFIERS.forEach(mod => {
+                const label = document.createElement('label');
+                label.style.cssText = 'background:rgba(30,41,59,0.8); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:6px;';
+                label.innerHTML = `<input type="checkbox" value="${mod.id}" onchange="toggleGameModifier('${mod.id}', this.checked)"> ${mod.icon} ${mod.name}`;
+                container.appendChild(label);
+            });
+        }
+
+        function toggleGameModifier(id, isChecked) {
+            if (isChecked) {
+                if (!selectedGameModifiers.includes(id)) selectedGameModifiers.push(id);
+            } else {
+                selectedGameModifiers = selectedGameModifiers.filter(m => m !== id);
+            }
+        }
+
+        function confirmStartMatch() {
+            closeSetupModal();
+            document.getElementById('mainMenuScreen').classList.add('hidden');
+            document.getElementById('inGameUI').classList.remove('hidden');
+
+            gameEngine.startMatch(selectedMap, selectedDifficulty, selectedGameModifiers);
+            renderInGameHotbar();
+            renderInGameConsumableHotbar();
+        }
+
+        function returnToMainMenu() {
+            document.getElementById('victoryOverlay').classList.add('hidden');
+            document.getElementById('gameOverOverlay').classList.add('hidden');
+            document.getElementById('inGameUI').classList.add('hidden');
+            document.getElementById('mainMenuScreen').classList.remove('hidden');
+            updateMainMenuHeader();
+        }
+
+        function renderInventoryTab() {
+            const heroContainer = document.getElementById('inventoryHeroContainer');
+            if (!playerProfile.unlockedTowers.includes(activeInventoryTowerKey)) {
+                activeInventoryTowerKey = playerProfile.unlockedTowers.find(key => TOWERS[key]) || 'scout';
+            }
+            const tower = TOWERS[activeInventoryTowerKey] || TOWERS['scout'];
+            const activeSkin = playerProfile.getTowerSkin(tower.id);
+
+            const spriteId = `${tower.id}_${activeSkin}_0`;
+            const hasSkinSprite = !!assets.getImage(spriteId);
+            const spriteImg = assets.getImage(spriteId) || assets.getImage(`${tower.id}_default_0`);
+            const previewFilter = !hasSkinSprite && activeSkin === 'gold' ? 'sepia(1) saturate(4) hue-rotate(5deg)' : '';
+
+            let skinBtnsHtml = '';
+            if (tower.skins) {
+                tower.skins.filter(s => playerProfile.hasSkin(tower.id, s.id)).forEach(s => {
+                    const isEquippedSkin = activeSkin === s.id;
+                    skinBtnsHtml += `<button class="skin-btn ${isEquippedSkin ? 'active' : ''}" onclick="selectInventoryTowerSkin('${tower.id}', '${s.id}')">${s.name}</button>`;
+                });
+            }
+
+            let rowsHtml = '';
+            tower.upgrades.forEach((upg, idx) => {
+                const roman = assets.toRoman(idx);
+                const costStr = idx === 0 ? `$${tower.cost}` : `$${upg.cost}`;
+                const dps = upg.attackSpeed > 0 ? (upg.damage / upg.attackSpeed).toFixed(1) : '-';
+
+                const abils = [];
+                if (upg.seeHidden) abils.push('<span class="stat-badge hidden">👁️ Hidden</span>');
+                if (upg.targetFlying) abils.push('<span class="stat-badge flying">🦅 Flying</span>');
+                if (upg.HarmLead) abils.push('<span class="stat-badge lead">🛡️ Lead</span>');
+                if (upg.income) abils.push(`<span style="color:#22c55e; font-weight:800;">+$${upg.income}</span>`);
+
+                rowsHtml += `
+                    <tr>
+                        <td style="font-weight:900; color:var(--accent-yellow);">${roman}</td>
+                        <td style="font-weight:700;">${upg.name}</td>
+                        <td>${costStr}</td>
+                        <td>${upg.damage}</td>
+                        <td>${upg.attackSpeed}s</td>
+                        <td style="color:var(--accent-green); font-weight:800;">${dps}</td>
+                        <td>${upg.range}</td>
+                        <td>${abils.join(' ')}</td>
+                    </tr>
+                `;
+            });
+
+            heroContainer.innerHTML = `
+                <div class="inventory-hero-card">
+                    <div class="inventory-hero-preview">
+                        <div class="inventory-hero-img-box">
+                            ${spriteImg ? `<img src="${spriteImg.src}" class="inventory-hero-img" style="filter:${previewFilter};">` : `<div style="font-size:40px;">${tower.icon}</div>`}
+                        </div>
+                        <div style="font-weight:900; font-size:16px;">${tower.name}</div>
+                        <div style="font-size:11px; color:#38bdf8; font-weight:800;">${tower.placement.toUpperCase()} TOWER</div>
+
+                        <div style="font-size:11px; color:#94a3b8; margin-top:4px;">SKINS</div>
+                        <div class="skin-selector-bar">
+                            ${skinBtnsHtml}
+                        </div>
+                    </div>
+
+                    <div class="inventory-hero-details">
+                        <div class="inventory-hero-title">
+                            <span>${tower.icon} ${tower.name}</span>
+                            <span style="font-size:12px; padding:3px 10px; border-radius:12px; background:rgba(56,189,248,0.15); color:#38bdf8;">${tower.role}</span>
+                        </div>
+                        <div class="inventory-hero-desc">${tower.description}</div>
+
+                        <div style="font-size:13px; font-weight:800; color:var(--accent-yellow); margin-top:4px;">LEVEL STAT COMPARISON</div>
+                        <table class="stat-comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Upgrade Name</th>
+                                    <th>Cost</th>
+                                    <th>Damage</th>
+                                    <th>Rate</th>
+                                    <th>DPS</th>
+                                    <th>Range</th>
+                                    <th>Abilities</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            renderLoadoutSlotsAndUnlockedTowers();
+        }
+
+        function selectInventoryTowerSkin(towerId, skinId) {
+            playerProfile.setTowerSkin(towerId, skinId);
+            renderInventoryTab();
+        }
+
+        function selectInventoryHeroTower(towerId) {
+            activeInventoryTowerKey = towerId;
+            renderInventoryTab();
+        }
+
+        function renderLoadoutSlotsAndUnlockedTowers() {
+            const slotsGrid = document.getElementById('loadoutSlotsGrid');
+            slotsGrid.innerHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                const towerKey = playerProfile.equippedTowers[i];
+                const slot = document.createElement('div');
+                slot.className = `loadout-slot ${towerKey ? 'filled' : ''}`;
+
+                if (towerKey) {
+                    const t = TOWERS[towerKey];
+                    const cardImg = assets.getImage(`card_${towerKey}`);
+                    slot.onclick = () => { playerProfile.equipTower(towerKey); renderInventoryTab(); };
+
+                    if (cardImg) {
+                        slot.innerHTML = `
+                            <span class="loadout-slot-num">[${i+1}]</span>
+                            <img src="${cardImg.src}" class="hotbar-card-img" alt="${t.name}">
+                        `;
+                    } else {
+                        slot.innerHTML = `
+                            <span class="loadout-slot-num">[${i+1}]</span>
+                            <div style="font-size:22px; margin-top:4px;">${t.icon}</div>
+                            <div class="loadout-slot-name">${t.name}</div>
+                        `;
+                    }
+                } else {
+                    slot.innerHTML = `
+                        <span class="loadout-slot-num">[${i+1}]</span>
+                        <div style="font-size:11px; color:#64748b;">EMPTY</div>
+                    `;
+                }
+                slotsGrid.appendChild(slot);
+            }
+
+            const towersGrid = document.getElementById('unlockedTowersGrid');
+            towersGrid.innerHTML = '';
+
+            playerProfile.unlockedTowers.filter(key => TOWERS[key]).forEach(key => {
+                const t = TOWERS[key];
+                const isEquipped = playerProfile.equippedTowers.includes(key);
+                const isSelectedForHero = activeInventoryTowerKey === key;
+                const cardImg = assets.getImage(`card_${key}`);
+
+                const card = document.createElement('div');
+                card.className = `inventory-tower-card ${isEquipped ? 'equipped' : ''}`;
+                if (isSelectedForHero) card.style.borderColor = 'var(--accent-yellow)';
+
+                card.onclick = () => {
+                    selectInventoryHeroTower(key);
+                    playerProfile.equipTower(key);
+                    renderInventoryTab();
+                };
+
+                card.innerHTML = `
+                    ${cardImg ? `<img src="${cardImg.src}" style="width:36px; height:36px; object-fit:contain;">` : `<div style="font-size:24px;">${t.icon}</div>`}
+                    <div>
+                        <div style="font-weight:800; font-size:14px;">${t.name}</div>
+                        <div style="font-size:11px; color:${isEquipped ? '#22c55e' : '#38bdf8'}; font-weight:800;">
+                            ${isEquipped ? '✓ EQUIPPED' : 'EQUIP / VIEW STATS'}
+                        </div>
+                    </div>
+                `;
+                towersGrid.appendChild(card);
+            });
+        }
+
+        function renderShopTab() {
+            const towersGrid = document.getElementById('towersShopGrid');
+            towersGrid.innerHTML = '';
+
+            Object.keys(TOWERS).forEach(key => {
+                const t = TOWERS[key];
+                const isOwned = playerProfile.unlockedTowers.includes(key);
+                const priceStr = t.shopCurrency === 'gems' ? `💎${t.shopPrice}` : `$${t.shopPrice}`;
+                const cardImg = assets.getImage(`card_${key}`);
+
+                const card = document.createElement('div');
+                card.className = 'shop-card';
+                card.innerHTML = `
+                    <div class="shop-card-header">
+                        <div class="shop-card-icon" style="border-color:${t.color};">
+                            ${cardImg ? `<img src="${cardImg.src}" style="width:40px; height:40px; object-fit:contain;">` : t.icon}
+                        </div>
+                        <div>
+                            <div class="shop-card-title">${t.name}</div>
+                            <div style="font-size:11px; color:#94a3b8;">${t.placement.toUpperCase()}</div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:#cbd5e1; line-height:1.3;">${t.description}</div>
+                    <button class="btn-buy" ${isOwned ? 'disabled' : ''} onclick="buyShopTower('${key}')">
+                        ${isOwned ? 'OWNED' : priceStr}
+                    </button>
+                `;
+                towersGrid.appendChild(card);
+            });
+
+            const consGrid = document.getElementById('consumablesShopGrid');
+            consGrid.innerHTML = '';
+
+            Object.keys(CONSUMABLES).forEach(key => {
+                const c = CONSUMABLES[key];
+                const ownedCount = playerProfile.consumables[key] || 0;
+                const priceStr = c.currency === 'gems' ? `💎${c.price}` : `$${c.price}`;
+
+                const card = document.createElement('div');
+                card.className = 'shop-card';
+                card.innerHTML = `
+                    <div class="shop-card-header">
+                        <div class="shop-card-icon">${c.icon}</div>
+                        <div>
+                            <div class="shop-card-title">${c.name}</div>
+                            <div style="font-size:11px; color:#facc15;">OWNED: ${ownedCount}</div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:#cbd5e1; line-height:1.3;">${c.desc}</div>
+                    <button class="btn-buy" onclick="buyShopConsumable('${key}')">
+                        ${priceStr}
+                    </button>
+                `;
+                consGrid.appendChild(card);
+            });
+
+            const cratesGrid = document.getElementById('skinCratesShopGrid');
+            cratesGrid.innerHTML = '';
+
+            Object.keys(SKIN_CRATES).forEach(key => {
+                const crate = SKIN_CRATES[key];
+                const ownedCount = playerProfile.skinCrates[key] || 0;
+                const availableCount = playerProfile.getAvailableCrateSkins(key).length;
+                const unreservedCount = Math.max(0, availableCount - ownedCount);
+                const priceStr = crate.currency === 'gems' ? `💎${crate.price}` : `$${crate.price}`;
+                const card = document.createElement('div');
+                card.className = 'shop-card';
+                card.innerHTML = `
+                    <div class="shop-card-header">
+                        <div class="shop-card-icon">${crate.icon}</div>
+                        <div>
+                            <div class="shop-card-title">${crate.name}</div>
+                            <div style="font-size:11px; color:#facc15;">OWNED: ${ownedCount} · ${unreservedCount} SKINS AVAILABLE</div>
+                        </div>
+                    </div>
+                    <div style="font-size:12px; color:#cbd5e1; line-height:1.3;">${crate.desc}</div>
+                    <button class="btn-buy" ${unreservedCount === 0 ? 'disabled' : ''} onclick="buyShopSkinCrate('${key}')">
+                        ${unreservedCount === 0 ? 'NO SKINS AVAILABLE' : `BUY ${priceStr}`}
+                    </button>
+                    <button class="btn-buy" ${ownedCount === 0 || availableCount === 0 ? 'disabled' : ''} onclick="openShopSkinCrate('${key}')">
+                        OPEN CRATE
+                    </button>
+                `;
+                cratesGrid.appendChild(card);
+            });
+        }
+
+        function buyShopTower(key) {
+            if (playerProfile.buyTower(key)) {
+                sounds.playBuy();
+                updateMainMenuHeader();
+                renderShopTab();
+            }
+        }
+
+        function buyShopConsumable(key) {
+            if (playerProfile.buyConsumable(key)) {
+                sounds.playBuy();
+                updateMainMenuHeader();
+                renderShopTab();
+            }
+        }
+
+        function buyShopSkinCrate(key) {
+            if (playerProfile.buySkinCrate(key)) {
+                sounds.playBuy();
+                updateMainMenuHeader();
+                renderShopTab();
+            }
+        }
+
+        function openShopSkinCrate(key) {
+            if (playerProfile.openSkinCrate(key)) {
+                sounds.playBuy();
+                updateMainMenuHeader();
+                renderShopTab();
+            }
+        }
+
+        function submitPromoCode() {
+            const input = document.getElementById('promoCodeInput');
+            playerProfile.redeemCode(input.value);
+            input.value = '';
+            updateMainMenuHeader();
+        }
+
+        // Render In-Game Bottom Hotbar with Tower Cards filling the entire slot button!
+        function renderInGameHotbar() {
+            const bar = document.getElementById('inGameHotbar');
+            if (!bar) return;
+            bar.innerHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                const towerKey = playerProfile.equippedTowers[i];
+                const slot = document.createElement('div');
+
+                if (towerKey) {
+                    const t = TOWERS[towerKey];
+                    const isSelected = gameEngine.selectedShopTowerKey === towerKey;
+                    const cardImg = assets.getImage(`card_${towerKey}`);
+
+                    slot.className = `hotbar-slot ${isSelected ? 'selected' : ''}`;
+                    slot.onclick = () => gameEngine.selectEquippedHotbarTower(towerKey);
+
+                    if (cardImg) {
+                        slot.innerHTML = `
+                            <span class="hotbar-key">[${i+1}]</span>
+                            <img src="${cardImg.src}" class="hotbar-card-img" alt="${t.name}">
+                        `;
+                    } else {
+                        slot.innerHTML = `
+                            <span class="hotbar-key">[${i+1}]</span>
+                            <div style="font-size:24px; font-weight:800; color:${t.color}; margin-top:6px;">${t.icon}</div>
+                            <div style="font-size:10px; font-weight:800; color:#22c55e;">$${t.cost}</div>
+                        `;
+                    }
+                } else {
+                    slot.className = 'hotbar-slot';
+                    slot.style.opacity = '0.3';
+                    slot.innerHTML = `<span class="hotbar-key">[${i+1}]</span>`;
+                }
+                bar.appendChild(slot);
+            }
+        }
+
+        function renderInGameConsumableHotbar() {
+            const bar = document.getElementById('inGameConsumableHotbar');
+            if (!bar) return;
+            bar.innerHTML = '';
+
+            Object.keys(CONSUMABLES).forEach(key => {
+                const c = CONSUMABLES[key];
+                const count = playerProfile.consumables[key] || 0;
+
+                const btn = document.createElement('div');
+                btn.className = 'consumable-slot-btn';
+                btn.onclick = () => gameEngine.useInGameConsumable(key);
+                btn.innerHTML = `
+                    <div style="font-size:20px;">${c.icon}</div>
+                    <span class="consumable-count">${count}</span>
+                `;
+                bar.appendChild(btn);
+            });
+        }
+
+        function handleWaveButtonClick() {
+            gameEngine.skipWave();
+        }
+
+        function toggleGameSpeed() {
+            const btn = document.getElementById('btnGameSpeed');
+            const speedSteps = [0, 0.5, 1, 2, 4];
+            const currentIndex = speedSteps.indexOf(gameEngine.gameSpeed);
+            gameEngine.gameSpeed = speedSteps[(currentIndex + 1) % speedSteps.length];
+            btn.innerText = `⚡ ${gameEngine.gameSpeed}x`;
+            btn.style.borderColor = gameEngine.gameSpeed === 4
+                ? '#ef4444'
+                : gameEngine.gameSpeed === 2
+                    ? '#facc15'
+                    : 'rgba(255,255,255,0.1)';
+        }
+
+        function toggleAudioMute() {
+            sounds.muted = !sounds.muted;
+            document.getElementById('btnMuteAudio').innerText = sounds.muted ? '🔇' : '🔊';
+        }
+
+        function cycleSelectedTowerTargeting() {
+            if (gameEngine.selectedTower) {
+                gameEngine.selectedTower.cycleTargetMode();
+                gameEngine.updateTowerInspectUI();
+            }
+        }
+
+        function upgradeSelectedTower(pathKey = null) {
+            if (gameEngine.selectedTower) {
+                const tower = gameEngine.selectedTower;
+                const cost = gameEngine.getTowerUpgradeCost(tower, pathKey);
+                if (cost !== null && gameEngine.cash >= cost) {
+                    const spent = tower.upgrade(pathKey);
+                    if (spent > 0) {
+                        tower.totalSpent += cost - spent;
+                        gameEngine.cash -= cost;
+                        gameEngine.updateUI();
+                    }
+                }
+            }
+        }
+
+        function sellSelectedTower() {
+            if (gameEngine.selectedTower) {
+                const sellVal = gameEngine.selectedTower.getSellValue();
+                gameEngine.cash += sellVal;
+                gameEngine.towers = gameEngine.towers.filter(t => t !== gameEngine.selectedTower);
+                gameEngine.selectedTower = null;
+                sounds.playBuy();
+                gameEngine.updateUI();
+            }
+        }
+    </script>
+</body>
+</html>
