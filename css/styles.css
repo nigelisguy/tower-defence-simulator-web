@@ -57,7 +57,7 @@ body {
     border: 2px solid var(--accent-blue);
     color: var(--text-primary);
     padding: 10px 20px;
-    border-radius: 10px;
+
     font-weight: 800;
     font-size: 14px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
@@ -105,7 +105,7 @@ body {
 .avatar-badge {
     width: 44px;
     height: 44px;
-    border-radius: 10px;
+
     background: linear-gradient(135deg, #2563eb, #38bdf8);
     display: flex;
     align-items: center;
@@ -130,7 +130,6 @@ body {
     width: 140px;
     height: 10px;
     background: rgba(30, 41, 59, 0.9);
-    border-radius: 5px;
     overflow: hidden;
     margin-top: 3px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -155,7 +154,7 @@ body {
     background: rgba(30, 41, 59, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 6px 14px;
-    border-radius: 12px;
+
 }
 
 .currency-label {
@@ -201,7 +200,7 @@ body {
     padding: 14px 18px;
     background: rgba(30, 41, 59, 0.5);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+
     color: var(--text-muted);
     font-size: 15px;
     font-weight: 800;
@@ -258,7 +257,7 @@ body {
 .gamemode-btn-card {
     background: rgba(15, 23, 42, 0.8);
     border: 2px solid var(--panel-border);
-    border-radius: 16px;
+
     padding: 12px;
     display: flex;
     flex-direction: column;
@@ -299,7 +298,7 @@ body {
 .inventory-hero-card {
     background: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
     border: 2px solid var(--accent-blue);
-    border-radius: 16px;
+
     padding: 20px;
     display: flex;
     gap: 24px;
@@ -314,7 +313,7 @@ body {
     align-items: center;
     background: rgba(15, 23, 42, 0.8);
     border: 2px solid var(--panel-border);
-    border-radius: 12px;
+
     padding: 16px;
     gap: 12px;
 }
@@ -322,7 +321,7 @@ body {
 .inventory-hero-img-box {
     width: 120px;
     height: 120px;
-    border-radius: 12px;
+
     background: rgba(30, 41, 59, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
@@ -347,7 +346,7 @@ body {
 
 .skin-btn {
     padding: 4px 10px;
-    border-radius: 6px;
+
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(30, 41, 59, 0.8);
     color: var(--text-primary);
@@ -388,7 +387,7 @@ body {
     line-height: 1.4;
     background: rgba(30, 41, 59, 0.5);
     padding: 10px 14px;
-    border-radius: 8px;
+
     border-left: 3px solid var(--accent-blue);
 }
 
@@ -421,7 +420,7 @@ body {
 
 .stat-badge {
     padding: 2px 6px;
-    border-radius: 4px;
+
     font-size: 10px;
     font-weight: 800;
 }
@@ -433,7 +432,7 @@ body {
 .loadout-bar-container {
     background: rgba(30, 41, 59, 0.6);
     border: 2px solid var(--accent-blue);
-    border-radius: 14px;
+
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -450,7 +449,7 @@ body {
     height: 64px;
     background: rgba(15, 23, 42, 0.8);
     border: 2px dashed rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -475,7 +474,7 @@ body {
     color: #ffffff;
     background: rgba(0, 0, 0, 0.6);
     padding: 1px 4px;
-    border-radius: 4px;
+
     z-index: 5;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -489,7 +488,7 @@ body {
 .inventory-tower-card {
     background: rgba(30, 41, 59, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
+
     padding: 12px;
     display: flex;
     align-items: center;
@@ -524,7 +523,7 @@ body {
 .shop-card {
     background: rgba(30, 41, 59, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -541,7 +540,7 @@ body {
 .shop-card-icon {
     width: 48px;
     height: 48px;
-    border-radius: 10px;
+
     background: rgba(15, 23, 42, 0.8);
     display: flex;
     align-items: center;
@@ -559,7 +558,7 @@ body {
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 8px;
+
     background: linear-gradient(135deg, #16a34a, #22c55e);
     color: #fff;
     font-weight: 800;
@@ -647,7 +646,7 @@ body {
     gap: 2px 7px;
     padding: 6px;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
+
     background: rgba(30, 41, 59, 0.85);
     color: var(--text-primary);
     text-align: left;
@@ -661,7 +660,7 @@ body {
     width: 24px;
     aspect-ratio: 1;
     border: 1px solid rgba(56, 189, 248, 0.55);
-    border-radius: 4px;
+
     color: #7dd3fc;
     font-size: 11px;
     font-weight: 900;
@@ -706,7 +705,7 @@ body {
     background: rgba(30, 41, 59, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 5px 12px;
-    border-radius: 10px;
+
 }
 
 .hud-pill.cash { border-color: rgba(34, 197, 94, 0.3); }
@@ -749,7 +748,7 @@ body {
     background: rgba(15, 23, 42, 0.92);
     border: 2px solid var(--panel-border);
     padding: 8px 14px;
-    border-radius: 16px;
+
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
     z-index: 25;
@@ -760,7 +759,7 @@ body {
     height: 64px;
     background: rgba(30, 41, 59, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -797,7 +796,7 @@ body {
     color: #ffffff;
     background: rgba(0, 0, 0, 0.65);
     padding: 1px 4px;
-    border-radius: 4px;
+
     z-index: 5;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
@@ -817,7 +816,7 @@ body {
     height: 52px;
     background: rgba(15, 23, 42, 0.9);
     border: 2px solid var(--accent-purple);
-    border-radius: 10px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -848,7 +847,7 @@ body {
     width: 310px;
     background: var(--panel-bg);
     border: 2px solid var(--accent-blue);
-    border-radius: 12px;
+
     padding: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
@@ -875,7 +874,7 @@ body {
     color: var(--text-muted);
     background: rgba(30, 41, 59, 0.6);
     padding: 8px;
-    border-radius: 6px;
+
     margin-bottom: 12px;
     white-space: pre-line;
 }
@@ -891,7 +890,7 @@ body {
     width: 100%;
     padding: 8px 10px;
     border: 1px solid rgba(34, 197, 94, 0.5);
-    border-radius: 6px;
+
     background: rgba(22, 163, 74, 0.2);
     color: #dcfce7;
     font-size: 12px;
@@ -915,7 +914,6 @@ body {
     border: 1px solid var(--accent-purple);
     color: var(--accent-purple);
     padding: 6px 10px;
-    border-radius: 6px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -930,7 +928,6 @@ body {
     border: none;
     color: #fff;
     padding: 8px 12px;
-    border-radius: 6px;
     font-weight: 800;
     font-size: 13px;
     cursor: pointer;
@@ -942,7 +939,6 @@ body {
     border: none;
     color: #fff;
     padding: 8px 12px;
-    border-radius: 6px;
     font-weight: 800;
     font-size: 13px;
     cursor: pointer;
@@ -969,7 +965,6 @@ body {
     max-height: 90vh;
     background: var(--panel-bg);
     border: 2px solid var(--panel-border);
-    border-radius: 16px;
     padding: 28px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
     display: flex;
@@ -996,7 +991,6 @@ body {
 .option-card {
     background: rgba(30, 41, 59, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
     padding: 14px;
     cursor: pointer;
     transition: all 0.2s;
@@ -1020,7 +1014,6 @@ body {
     border: none;
     color: #fff;
     padding: 10px 18px;
-    border-radius: 8px;
     font-weight: 800;
     font-size: 14px;
     cursor: pointer;
@@ -1032,7 +1025,7 @@ body {
     border: none;
     color: #fff;
     padding: 10px 18px;
-    border-radius: 8px;
+
     font-weight: 800;
     font-size: 14px;
     cursor: pointer;
@@ -1044,7 +1037,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     padding: 6px 12px;
-    border-radius: 6px;
+
     font-weight: 700;
     cursor: pointer;
 }
