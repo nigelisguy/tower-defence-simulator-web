@@ -1,25 +1,4 @@
-// TDS Web - Fixed Wave Definitions
-// ===================================
-// Each difficulty has a WAVE_DATA array. Each entry defines one wave.
-// Wave format:
-//   { enemies: [ { type, count, mods (optional), delay (optional) }, ... ] }
-//
-// Enemy types: 'normal', 'quick', 'slow', 'hidden', 'flying', 'lead',
-//              'hidden_flying', 'lead_flying',
-//              'giant_boss', 'molten_boss', 'fallen_king', 'frost_hero'
-//
-// Modifiers:   'AGRO', 'BLOATED', 'SHIELDED', 'REGEN', 'SWIFT'
-//
-// delay: seconds between spawns for this group (default 0.8)
-//
-// To edit a wave, just change/add/remove entries in the enemies array.
-// ===================================
-
 const WAVE_DATA = {
-
-    // =====================
-    // EASY  (20 waves)
-    // =====================
     easy: [
         // Wave 1
         { enemies: [

@@ -76,7 +76,7 @@ class Tower {
         this.abilityPower = stats.abilityPower || 0;
         this.abilityDuration = stats.abilityDuration || 0;
         this.abilityCooldownDuration = stats.abilityCooldown || 0;
-        
+
         this.placement = this.config.placement;
     }
 
@@ -257,7 +257,7 @@ class Tower {
                 if (!this.canTargetEnemy(e)) return false;
                 return Math.hypot(e.x - this.x, e.y - this.y) <= this.range;
             });
-            
+
             rangeEnemies.sort((a, b) => Math.hypot(a.x - target.x, a.y - target.y) - Math.hypot(b.x - target.x, b.y - target.y));
             const shockTargets = rangeEnemies.slice(0, this.targetsCount);
 

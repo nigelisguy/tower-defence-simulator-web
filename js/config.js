@@ -663,19 +663,44 @@ const PROMO_CODES = {
 
 };
 
-// Base Enemies
 const BASE_ENEMIES = {
-    normal: { name: 'Normal', hp: 12, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
-    quick: { name: 'Quick Enemy', hp: 10, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
-    slow: { name: 'Heavy Tank', hp: 45, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
-    hidden: { name: 'Shadow Ninja', hp: 20, speed: 95, reward: 20, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
-    flying: { name: 'Spectral Drake', hp: 28, speed: 110, reward: 22, color: '#38bdf8', size: 15, hidden: false, flying: true, lead: false },
-    lead: { name: 'Lead Armored', hp: 80, speed: 50, reward: 40, color: '#475569', size: 18, hidden: false, flying: false, lead: true },
-    hidden_flying: { name: 'Phantom Scout', hp: 35, speed: 115, reward: 35, color: '#a855f7', size: 14, hidden: true, flying: true, lead: false },
-    lead_flying: { name: 'Sky Fortress', hp: 160, speed: 65, reward: 60, color: '#334155', size: 20, hidden: false, flying: true, lead: true },
-
-    giant_boss: { name: 'Gargantua', hp: 850, speed: 35, reward: 250, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: true },
-    molten_boss: { name: 'Molten Core Boss', hp: 3500, speed: 30, reward: 800, color: '#f97316', size: 32, hidden: false, flying: false, lead: true, boss: true },
-    fallen_king: { name: 'Fallen King', hp: 7500, speed: 28, reward: 1500, color: '#9333ea', size: 36, hidden: false, flying: false, lead: true, boss: true },
-    frost_hero: { name: 'Frost Titan', hp: 5500, speed: 32, reward: 1200, color: '#0284c7', size: 34, hidden: false, flying: false, lead: true, boss: true }
+  //basic
+  normal: { name: 'Normal', hp: 5, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
+  abnormal: { name: 'Abnormal', hp: 8, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
+  frostnormal: { name: 'Frost', hp: 12, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
+  //fast
+  quick: { name: 'Quick', hp: 10, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
+  quickabnormal: { name: 'Quick Abnormal', hp: 14, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
+  frostrunner: { name: 'Snowy', hp: 18, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
+  //tanky
+  slow: { name: 'Heavy', hp: 50, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
+  molten: { name: 'Molten', hp: 40, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
+  snowman: { name: 'Snowman', hp: 100, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
+  //1stboss
+  abnormal: { name: 'Elite Abnormal', hp: 500, speed: 35, reward: 500, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: false },
+  frost: { name: 'Snow Golem', hp: 600, speed: 35, reward: 600, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: false },
+  //gimmicky/detections until 2ndboss enemies
+  hidden: { name: 'Hidden', hp: 20, speed: 95, reward: 20, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
+  flying: { name: 'Balloon', hp: 28, speed: 110, reward: 30, color: '#38bdf8', size: 15, hidden: false, flying: true, lead: false },
+  lead: { name: 'Lead', hp: 80, speed: 50, reward: 40, color: '#475569', size: 18, hidden: false, flying: false, lead: true },
+  yeti: { name: 'Yeti', hp: 200, speed: 200, reward: 50, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
+  mist: { name: 'Cold Mist', hp: 250, speed: 95, reward: 200, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
+  invader: { name: 'Lead', hp: 80, speed: 50, reward: 30, color: '#475569', size: 18, hidden: false, flying: false, lead: true },
+  angle: { name: 'Frost Angel', hp: 250, speed: 70, reward: 250, color: '#475569', size: 18, hidden: false, flying: true, lead: false },
+  tank: { name: 'Tank', hp: 200, speed: 40, reward: 200, color: '#475569', size: 18, hidden: false, flying: false, lead: false },
+  //unused
+  hidden_flying: { name: 'Phantom Fleet', hp: 35, speed: 115, reward: 35, color: '#a855f7', size: 14, hidden: true, flying: true, lead: false },
+  lead_flying: { name: 'Blimp', hp: 160, speed: 65, reward: 60, color: '#334155', size: 20, hidden: false, flying: true, lead: true },
+  //here comes the splitters
+  splitter4: { name: 'Splitter (Layer 4)', hp: 500, speed: 35, reward: 500, color: '#a774ad', size: 40, hidden: false, flying: false, lead: false },
+  splitter3: { name: 'Splitter (Layer 3)', hp: 350, speed: 45, reward: 200, color: '#a774ad', size: 30, hidden: false, flying: false, lead: false },
+  splitter4: { name: 'Splitter (Layer 2)', hp: 200, speed: 65, reward: 100, color: '#a774ad', size: 25, hidden: false, flying: false, lead: false },
+  splitter4: { name: 'Splitter (Layer 1)', hp: 50, speed: 85, reward: 50, color: '#a774ad', size: 20, hidden: false, flying: false, lead: false },
+  splitter4: { name: 'Splitter', hp: 50, speed: 95, reward: 10, color: '#a774ad', size: 20, hidden: false, flying: false, lead: false },
+  //2nd/final boss for 1st-2nd gamemodes
+  giant_boss: { name: 'Brute', hp: 10000, speed: 35, reward: 20000, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: true },
+  molten_boss: { name: 'Molten Core Boss', hp: 3500, speed: 30, reward: 800, color: '#f97316', size: 32, hidden: false, flying: false, lead: true, boss: true },
+  fallen_king: { name: 'Fallen King', hp: 7500, speed: 28, reward: 1500, color: '#9333ea', size: 36, hidden: false, flying: false, lead: true, boss: true },
+  //idk
+  frost_hero: { name: 'Frost Titan', hp: 5500, speed: 32, reward: 1200, color: '#0284c7', size: 34, hidden: false, flying: false, lead: true, boss: true }
 };
