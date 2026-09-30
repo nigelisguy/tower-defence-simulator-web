@@ -433,7 +433,7 @@ body {
     background: rgba(30, 41, 59, 0.6);
     border: 2px solid var(--accent-blue);
 
-    padding: 16px;
+    padding: 50px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -446,7 +446,6 @@ body {
 }
 
 .loadout-slot {
-    height: 64px;
     background: rgba(15, 23, 42, 0.8);
     border: 2px dashed rgba(255, 255, 255, 0.2);
 

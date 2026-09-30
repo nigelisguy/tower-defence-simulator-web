@@ -205,7 +205,7 @@ class PlayerProfile {
         const idx = this.equippedTowers.indexOf(towerKey);
         if (idx !== -1) {
             if (this.equippedTowers.length <= 1) {
-                if (window.showToast) window.showToast('Must have at least 1 tower equipped');
+                if (window.showToast) window.showToast('Must have at least 1 tower equipped!');
                 return false;
             }
             this.equippedTowers.splice(idx, 1);
