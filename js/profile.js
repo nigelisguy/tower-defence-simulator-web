@@ -156,13 +156,13 @@ class PlayerProfile {
 
         if (crate.currency === 'gems') {
             if (this.gems < crate.price) {
-                if (window.showToast) window.showToast('Not enough Gems');
+                if (window.showToast) window.showToast('Not enough Gems!');
                 return false;
             }
             this.gems -= crate.price;
         } else {
             if (this.coins < crate.price) {
-                if (window.showToast) window.showToast('Not enough Coins');
+                if (window.showToast) window.showToast('Not enough Coins!');
                 return false;
             }
             this.coins -= crate.price;
@@ -231,13 +231,13 @@ class PlayerProfile {
 
         if (currency === 'gems') {
             if (this.gems < price) {
-                if (window.showToast) window.showToast('Not enough Gems');
+                if (window.showToast) window.showToast('Not enough Gems!');
                 return false;
             }
             this.gems -= price;
         } else {
             if (this.coins < price) {
-                if (window.showToast) window.showToast('Not enough Coins');
+                if (window.showToast) window.showToast('Not enough Coins!');
                 return false;
             }
             this.coins -= price;
@@ -260,13 +260,13 @@ class PlayerProfile {
 
         if (item.currency === 'gems') {
             if (this.gems < item.price) {
-                if (window.showToast) window.showToast('Not enough Gems');
+                if (window.showToast) window.showToast('Not enough Gems!');
                 return false;
             }
             this.gems -= item.price;
         } else {
             if (this.coins < item.price) {
-                if (window.showToast) window.showToast('Not enough Coins');
+                if (window.showToast) window.showToast('Not enough Coins!');
                 return false;
             }
             this.coins -= item.price;
