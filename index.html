@@ -483,16 +483,36 @@
 
         function renderInventoryTab() {
             const heroContainer = document.getElementById('inventoryHeroContainer');
-            if (!playerProfile.unlockedTowers.includes(activeInventoryTowerKey)) {
-                activeInventoryTowerKey = playerProfile.unlockedTowers.find(key => TOWERS[key]) || 'scout';
-            }
-            const tower = TOWERS[activeInventoryTowerKey] || TOWERS['scout'];
-            const activeSkin = playerProfile.getTowerSkin(tower.id);
 
-            const spriteId = `${tower.id}_${activeSkin}_0`;
-            const hasSkinSprite = !!assets.getImage(spriteId);
-            const spriteImg = assets.getImage(spriteId) || assets.getImage(`${tower.id}_default_0`);
-            const previewFilter = !hasSkinSprite && activeSkin === 'gold' ? 'sepia(1) saturate(4) hue-rotate(5deg)' : '';
+            if (!playerProfile.unlockedTowers.includes(activeInventoryTowerKey)) {
+                activeInventoryTowerKey =
+                    playerProfile.unlockedTowers.find(key => TOWERS[key]) || 'scout';
+            }
+
+            const tower = TOWERS[activeInventoryTowerKey] || TOWERS['scout'];
+
+            const activeSkin = playerProfile.getTowerSkin(tower.id) || 'regular';
+            let assetSkin = activeSkin;
+
+            if (activeSkin === 'gold') {
+                assetSkin = 'golden';
+            }
+            let spriteImg = assets.getTowerImage(
+                tower.id,
+                assetSkin,
+                0
+            );
+
+            // Always fall back to the regular tower sprite
+            if (!spriteImg) {
+                spriteImg = assets.getTowerImage(
+                    tower.id,
+                    'regular',
+                    0
+                );
+            }
+
+            const previewFilter = '';
 
             let skinBtnsHtml = '';
 
@@ -501,8 +521,9 @@
                     s => playerProfile.hasSkin(tower.id, s.id)
                 );
 
-                const currentSkin = unlockedSkins.find(s => s.id === activeSkin)
-                    || unlockedSkins[0];
+                const currentSkin =
+                    unlockedSkins.find(s => s.id === activeSkin) ||
+                    unlockedSkins[0];
 
                 skinBtnsHtml = `
                     <div class="skin-selector">
@@ -537,54 +558,149 @@
             }
 
             let rowsHtml = '';
+
             tower.upgrades.forEach((upg, idx) => {
                 const roman = assets.toRoman(idx);
                 const costStr = idx === 0 ? `$${tower.cost}` : `$${upg.cost}`;
-                const dps = upg.attackSpeed > 0 ? (upg.damage / upg.attackSpeed).toFixed(1) : '-';
+                const dps = upg.attackSpeed > 0
+                    ? (upg.damage / upg.attackSpeed).toFixed(1)
+                    : '-';
 
                 const abils = [];
-                if (upg.seeHidden) abils.push('<span class="stat-badge hidden">👁️ Hidden</span>');
-                if (upg.targetFlying) abils.push('<span class="stat-badge flying">🦅 Flying</span>');
-                if (upg.HarmLead) abils.push('<span class="stat-badge lead">🛡️ Lead</span>');
-                if (upg.income) abils.push(`<span style="color:#22c55e; font-weight:800;">+$${upg.income}</span>`);
+
+                if (upg.seeHidden) {
+                    abils.push('<span class="stat-badge hidden">👁️ Hidden</span>');
+                }
+
+                if (upg.targetFlying) {
+                    abils.push('<span class="stat-badge flying">🦅 Flying</span>');
+                }
+
+                if (upg.HarmLead) {
+                    abils.push('<span class="stat-badge lead">🛡️ Lead</span>');
+                }
+
+                if (upg.income) {
+                    abils.push(
+                        `<span style="color:#22c55e; font-weight:800;">+$${upg.income}</span>`
+                    );
+                }
 
                 rowsHtml += `
                     <tr>
-                        <td style="font-weight:900; color:var(--accent-yellow);">${roman}</td>
-                        <td style="font-weight:700;">${upg.name}</td>
-                        <td>${costStr}</td>
-                        <td>${upg.damage}</td>
-                        <td>${upg.attackSpeed}s</td>
-                        <td style="color:var(--accent-green); font-weight:800;">${dps}</td>
-                        <td>${upg.range}</td>
-                        <td>${abils.join(' ')}</td>
+                        <td style="font-weight:900; color:var(--accent-yellow);">
+                            ${roman}
+                        </td>
+
+                        <td style="font-weight:700;">
+                            ${upg.name}
+                        </td>
+
+                        <td>
+                            ${costStr}
+                        </td>
+
+                        <td>
+                            ${upg.damage}
+                        </td>
+
+                        <td>
+                            ${upg.attackSpeed}s
+                        </td>
+
+                        <td style="color:var(--accent-green); font-weight:800;">
+                            ${dps}
+                        </td>
+
+                        <td>
+                            ${upg.range}
+                        </td>
+
+                        <td>
+                            ${abils.join(' ')}
+                        </td>
                     </tr>
                 `;
             });
 
             heroContainer.innerHTML = `
                 <div class="inventory-hero-card">
-                    <div class="inventory-hero-preview">
-                        <div class="inventory-hero-img-box">
-                            ${spriteImg ? `<img src="${spriteImg.src}" class="inventory-hero-img" style="filter:${previewFilter};">` : `<div style="font-size:40px;">${tower.icon}</div>`}
-                        </div>
-                        <div style="font-weight:900; font-size:16px;">${tower.name}</div>
-                        <div style="font-size:11px; color:#38bdf8; font-weight:800;">${tower.placement.toUpperCase()} TOWER</div>
 
-                        <div style="font-size:11px; color:#94a3b8; margin-top:4px;">SKINS</div>
+                    <div class="inventory-hero-preview">
+
+                        <div class="inventory-hero-img-box">
+
+                            ${
+                                spriteImg
+                                    ? `
+                                        <img
+                                            src="${spriteImg.src}"
+                                            class="inventory-hero-img"
+                                            style="filter:${previewFilter};"
+                                        >
+                                      `
+                                    : `
+                                        <div style="font-size:40px;">
+                                            ${tower.icon}
+                                        </div>
+                                      `
+                            }
+
+                        </div>
+
+                        <div style="font-weight:900; font-size:16px;">
+                            ${tower.name}
+                        </div>
+
+                        <div style="font-size:11px; color:#38bdf8; font-weight:800;">
+                            ${tower.placement.toUpperCase()} TOWER
+                        </div>
+
+                        <div style="font-size:11px; color:#94a3b8; margin-top:4px;">
+                            SKINS
+                        </div>
+
                         <div class="skin-selector-bar">
                             ${skinBtnsHtml}
                         </div>
+
                     </div>
 
                     <div class="inventory-hero-details">
-                        <div class="inventory-hero-title">
-                            <span>${tower.icon} ${tower.name}</span>
-                            <span style="font-size:12px; padding:3px 10px; border-radius:12px; background:rgba(56,189,248,0.15); color:#38bdf8;">${tower.role}</span>
-                        </div>
-                        <div class="inventory-hero-desc">${tower.description}</div>
 
-                        <div style="font-size:13px; font-weight:800; color:var(--accent-yellow); margin-top:4px;">LEVEL STAT COMPARISON</div>
+                        <div class="inventory-hero-title">
+                            <span>
+                                ${tower.icon} ${tower.name}
+                            </span>
+
+                            <span
+                                style="
+                                    font-size:12px;
+                                    padding:3px 10px;
+                                    border-radius:12px;
+                                    background:rgba(56,189,248,0.15);
+                                    color:#38bdf8;
+                                "
+                            >
+                                ${tower.role}
+                            </span>
+                        </div>
+
+                        <div class="inventory-hero-desc">
+                            ${tower.description}
+                        </div>
+
+                        <div
+                            style="
+                                font-size:13px;
+                                font-weight:800;
+                                color:var(--accent-yellow);
+                                margin-top:4px;
+                            "
+                        >
+                            LEVEL STAT COMPARISON
+                        </div>
+
                         <table class="stat-comparison-table">
                             <thead>
                                 <tr>
@@ -598,16 +714,20 @@
                                     <th>Abilities</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 ${rowsHtml}
                             </tbody>
                         </table>
+
                     </div>
+
                 </div>
             `;
 
             renderLoadoutSlotsAndUnlockedTowers();
         }
+
 
         function selectInventoryTowerSkin(towerId, skinId) {
             playerProfile.setTowerSkin(towerId, skinId);

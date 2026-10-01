@@ -305,10 +305,69 @@ class Tower {
         ctx.stroke();
 
         // Check for custom SVG sprite matching equipped skin
-        const activeSkin = playerProfile.getTowerSkin(this.typeKey);
-        const spriteId = `${this.typeKey}_${activeSkin}_${Math.min(4, this.level)}`;
-        const hasSkinSprite = !!assets.getImage(spriteId);
-        const spriteImg = assets.getImage(spriteId) || assets.getImage(`${this.typeKey}_default_${Math.min(4, this.level)}`);
+        const activeSkin = playerProfile.getTowerSkin(this.typeKey) || 'regular';
+        const level = Math.min(4, this.level);
+
+        let spriteImg = assets.getTowerImage(
+            this.typeKey,
+            activeSkin,
+            level
+        );
+
+        // Fall back to regular skin if the selected skin has no sprite
+        if (!spriteImg) {
+            spriteImg = assets.getTowerImage(
+                this.typeKey,
+                'regular',
+                level
+            );
+        }
+
+        if (spriteImg) {
+            ctx.save();
+
+            ctx.rotate(this.angle - Math.PI / 2);
+            const naturalWidth = spriteImg.naturalWidth || 24; const naturalHeight = spriteImg.naturalHeight || 38;
+            const maxWidth = 28;
+            const maxHeight = 42;
+            const scale = Math.min(maxWidth / naturalWidth, maxHeight / naturalHeight);
+            const renderWidth = naturalWidth * scale;
+            const renderHeight = naturalHeight * scale;
+            ctx.drawImage(
+                spriteImg,
+                -renderWidth / 2,
+                -renderHeight / 2,
+                renderWidth,
+                renderHeight
+            );
+
+            ctx.restore();
+
+        } else {
+            // Fallback when no SVG exists
+            ctx.beginPath();
+            ctx.arc(0, 0, 14, 0, Math.PI * 2);
+            ctx.fillStyle = this.config.color;
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            if (this.typeKey !== 'farm' && this.typeKey !== 'commander') {
+                ctx.save();
+                ctx.rotate(this.angle);
+                ctx.fillStyle = '#0f172a';
+                ctx.fillRect(0, -3, 20, 6);
+                ctx.restore();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(this.config.icon, 0, 0);
+        }
+
 
         if (spriteImg) {
             ctx.save();
@@ -317,7 +376,6 @@ class Tower {
             // Preserve 26.3 x 41.2 natural SVG ratio (~0.64) to prevent squishing!
             const renderWidth = 24;
             const renderHeight = 38;
-            if (!hasSkinSprite && activeSkin === 'gold') ctx.filter = 'sepia(1) saturate(4) hue-rotate(5deg)';
             ctx.drawImage(spriteImg, -renderWidth / 2, -renderHeight / 2, renderWidth, renderHeight);
             ctx.filter = 'none';
             ctx.restore();

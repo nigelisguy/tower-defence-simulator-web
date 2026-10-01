@@ -9,10 +9,20 @@ class AssetManager {
         this.onComplete = null;
     }
 
+    // =============================================================
+    // PRELOAD ALL ASSETS
+    // =============================================================
+
     preloadAssets(onComplete) {
         this.onComplete = onComplete;
+
         this.loadedCount = 0;
         this.totalCount = 0;
+
+        // Reset previous data
+        this.images = {};
+        this.sources = {};
+        this.assetStatus = {};
 
         const assetList = [];
 
@@ -20,17 +30,20 @@ class AssetManager {
         // UI
         // =========================================================
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'upgradebox',
             'assets/ui/upgradebox/upgradebox.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'upgradeboxgold',
             'assets/ui/upgradebox/upgradeboxgold.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'upgradeboxevo',
             'assets/ui/upgradebox/upgradeboxevo.svg'
         );
@@ -39,7 +52,8 @@ class AssetManager {
         // MAP
         // =========================================================
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'map_simplecity',
             'assets/maps/debug/simplecity.svg'
         );
@@ -48,17 +62,20 @@ class AssetManager {
         // HUD
         // =========================================================
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'icon_money',
             'assets/ui/currencies/money.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'icon_wave',
             'assets/ui/currencies/wave.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'icon_tower',
             'assets/ui/currencies/tower.svg'
         );
@@ -67,32 +84,38 @@ class AssetManager {
         // MENU
         // =========================================================
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_easy',
             'assets/ui/menu buttons/normal/easy.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_casual',
             'assets/ui/menu buttons/normal/casual.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_intermediate',
             'assets/ui/menu buttons/normal/intermediate.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_molten',
             'assets/ui/menu buttons/normal/molten.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_fallen',
             'assets/ui/menu buttons/normal/fallen.svg'
         );
 
-        this.add(assetList,
+        this.add(
+            assetList,
             'menu_frost',
             'assets/ui/menu buttons/normal/frost.svg'
         );
@@ -101,15 +124,7 @@ class AssetManager {
         // TOWER CARDS
         // =========================================================
 
-        this.add(assetList,
-            'card_scout',
-            'assets/ui/towercard/scoutbox.svg'
-        );
-
-        this.add(assetList,
-            'card_sniper',
-            'assets/ui/towercard/sniperbox.svg'
-        );
+        this.addTowerCardAssets(assetList);
 
         // =========================================================
         // SCOUT
@@ -163,10 +178,16 @@ class AssetManager {
             `[AssetManager] Testing ${this.totalCount} assets...`
         );
 
+        // =========================================================
+        // NOTHING TO LOAD
+        // =========================================================
+
         if (this.totalCount === 0) {
-            if (this.onComplete) {
-                const callback = this.onComplete;
-                this.onComplete = null;
+            const callback = this.onComplete;
+
+            this.onComplete = null;
+
+            if (callback) {
                 callback();
             }
 
@@ -189,36 +210,45 @@ class AssetManager {
                 failed: false
             };
 
-            img.onload = () => {
-                this.loadedCount++;
+            // -----------------------------------------------------
+            // SUCCESS
+            // -----------------------------------------------------
 
+            img.onload = () => {
                 this.assetStatus[item.id].loaded = true;
 
-                console.log(
-                    `[AssetManager] ✓ ${item.src}`
-                );
-
-                this.checkComplete();
-            };
-
-            img.onerror = () => {
                 this.loadedCount++;
 
-                this.assetStatus[item.id].failed = true;
-
-                console.error(
-                    `[AssetManager] ✗ ${item.src}`
+                console.log(
+                    `[AssetManager] ✓ ${item.id} -> ${item.src}`
                 );
 
                 this.checkComplete();
             };
 
+            // -----------------------------------------------------
+            // FAILURE
+            // -----------------------------------------------------
+
+            img.onerror = () => {
+                this.assetStatus[item.id].failed = true;
+
+                this.loadedCount++;
+
+                console.error(
+                    `[AssetManager] ✗ ${item.id} -> ${item.src}`
+                );
+
+                this.checkComplete();
+            };
+
+            // Start loading
             img.src = item.src;
 
+            // Lookup by ID
             this.images[item.id] = img;
 
-            // Also allow:
-            // assets.getImage('assets/towers/scout/regular/scout0.svg')
+            // Lookup by path
             this.images[item.src] = img;
         });
     }
@@ -229,9 +259,46 @@ class AssetManager {
 
     add(list, id, src) {
         list.push({
-            id,
-            src
+            id: String(id),
+            src: String(src)
         });
+    }
+
+    // =============================================================
+    // TOWER CARDS
+    // =============================================================
+
+    addTowerCardAssets(list) {
+
+        this.add(
+            list,
+            'card_scout',
+            'assets/ui/towercard/scoutbox.svg'
+        );
+
+        this.add(
+            list,
+            'card_sniper',
+            'assets/ui/towercard/sniperbox.svg'
+        );
+
+        this.add(
+            list,
+            'card_minigunner',
+            'assets/ui/towercard/minigunnerbox.svg'
+        );
+
+        this.add(
+            list,
+            'card_operator',
+            'assets/ui/towercard/operatorbox.svg'
+        );
+
+        this.add(
+            list,
+            'card_juggernaut',
+            'assets/ui/towercard/juggerbox.svg'
+        );
     }
 
     // =============================================================
@@ -240,7 +307,10 @@ class AssetManager {
 
     addScoutAssets(list) {
 
+        // ---------------------------------------------------------
         // Regular
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -249,7 +319,10 @@ class AssetManager {
             );
         }
 
+        // ---------------------------------------------------------
         // Red
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -258,7 +331,10 @@ class AssetManager {
             );
         }
 
+        // ---------------------------------------------------------
         // Golden
+        // ---------------------------------------------------------
+
         this.add(
             list,
             'scout_golden_0',
@@ -289,7 +365,10 @@ class AssetManager {
             'assets/towers/scout/golden/scout2_g3.svg'
         );
 
+        // ---------------------------------------------------------
         // Plant
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -305,7 +384,17 @@ class AssetManager {
 
     addSniperAssets(list) {
 
+        // IMPORTANT:
+        // Sniper files are directly inside:
+        //
+        // assets/towers/sniper/
+        //
+        // There is NO "regular" folder.
+
+        // ---------------------------------------------------------
         // Regular
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -314,7 +403,10 @@ class AssetManager {
             );
         }
 
+        // ---------------------------------------------------------
         // Red
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -323,7 +415,10 @@ class AssetManager {
             );
         }
 
+        // ---------------------------------------------------------
         // Farmer
+        // ---------------------------------------------------------
+
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
@@ -354,20 +449,8 @@ class AssetManager {
 
     addOperatorAssets(list) {
 
-        /*
-         * IMPORTANT:
-         *
-         * The actual files are spelled:
-         *
-         * operater0.svg
-         * operater1.svg
-         * operater2.svg
-         * operater3.svg
-         *
-         * NOT:
-         *
-         * operator0.svg
-         */
+        // IMPORTANT:
+        // Actual filename is "operater", not "operator".
 
         for (let i = 0; i <= 3; i++) {
             this.add(
@@ -384,21 +467,9 @@ class AssetManager {
 
     addJuggernautAssets(list) {
 
-        /*
-         * Juggernaut has a different structure:
-         *
-         * assets/towers/regular/
-         *
-         * and uses:
-         *
-         * jugger_0.svg
-         * jugger_1.svg
-         * jugger_2.svg
-         * jugger_3.svg
-         * jugger_4a.svg
-         * jugger_4b.svg
-         * ...
-         */
+        // ---------------------------------------------------------
+        // Levels 0-3
+        // ---------------------------------------------------------
 
         for (let i = 0; i <= 3; i++) {
             this.add(
@@ -407,6 +478,13 @@ class AssetManager {
                 `assets/towers/regular/jugger_${i}.svg`
             );
         }
+
+        // ---------------------------------------------------------
+        // Levels 4-7
+        // ---------------------------------------------------------
+        //
+        // Each level has A and B variants.
+        //
 
         for (let i = 4; i <= 7; i++) {
 
@@ -429,6 +507,7 @@ class AssetManager {
     // =============================================================
 
     getImage(idOrPath) {
+
         if (!idOrPath) {
             return null;
         }
@@ -437,10 +516,45 @@ class AssetManager {
     }
 
     // =============================================================
+    // GET TOWER IMAGE
+    // =============================================================
+
+    getTowerImage(
+        tower,
+        skin = 'regular',
+        level = 0,
+        variant = ''
+    ) {
+
+        const id =
+            variant
+                ? `${tower}_${skin}_${level}${variant}`
+                : `${tower}_${skin}_${level}`;
+
+        return this.getImage(id);
+    }
+
+    // =============================================================
+    // GET TOWER CARD
+    // =============================================================
+
+    getTowerCard(tower) {
+
+        if (!tower) {
+            return null;
+        }
+
+        const id = `card_${String(tower).toLowerCase()}`;
+
+        return this.getImage(id);
+    }
+
+    // =============================================================
     // IS LOADED
     // =============================================================
 
     isLoaded(idOrPath) {
+
         const img = this.getImage(idOrPath);
 
         return !!(
@@ -463,10 +577,12 @@ class AssetManager {
     // =============================================================
 
     checkComplete() {
+
         if (
             this.loadedCount >= this.totalCount &&
             this.onComplete
         ) {
+
             const failed =
                 Object.values(this.assetStatus)
                     .filter(asset => asset.failed);
@@ -481,10 +597,20 @@ class AssetManager {
             );
 
             if (failed.length > 0) {
+
                 console.warn(
                     `[AssetManager] ${failed.length} assets failed.`
                 );
+
+                failed.forEach(asset => {
+                    console.error(
+                        `[AssetManager] FAILED: ` +
+                        `${asset.id} -> ${asset.src}`
+                    );
+                });
+
             } else {
+
                 console.log(
                     '[AssetManager] ✓ ALL ASSETS LOADED'
                 );
@@ -503,6 +629,7 @@ class AssetManager {
     // =============================================================
 
     printReport() {
+
         const assets =
             Object.values(this.assetStatus);
 
@@ -529,14 +656,17 @@ class AssetManager {
         );
 
         if (failed.length > 0) {
+
             console.group(
                 'Failed Assets'
             );
 
             failed.forEach(asset => {
+
                 console.error(
-                    asset.src
+                    `${asset.id}: ${asset.src}`
                 );
+
             });
 
             console.groupEnd();
@@ -550,9 +680,12 @@ class AssetManager {
     // =============================================================
 
     getFailedAssets() {
+
         return Object.values(
             this.assetStatus
-        ).filter(asset => asset.failed);
+        ).filter(
+            asset => asset.failed
+        );
     }
 
     // =============================================================
@@ -560,6 +693,7 @@ class AssetManager {
     // =============================================================
 
     toRoman(level) {
+
         const romanNumerals = [
             'I',
             'II',
@@ -583,10 +717,5 @@ class AssetManager {
         return String(numericLevel + 1);
     }
 }
-
-
-// =============================================================
-// GLOBAL
-// =============================================================
 
 const assets = new AssetManager();
