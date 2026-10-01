@@ -24,7 +24,7 @@ class GameMap {
             cliffBorder: '#555555',
             accentColor: '#38bdf8'
         };
-        
+
         // Exact winding city track layout extracted from assets/maps/debug/simplecity.svg
         this.path = [
             { x: 136, y: 0 },
@@ -128,12 +128,6 @@ class GameMap {
 
         for (let obs of this.obstacles) {
             ctx.beginPath();
-            ctx.arc(obs.x, obs.y, obs.radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
         }
 
         if (this.path.length > 1) {
@@ -172,12 +166,6 @@ class GameMap {
 
             const endPoint = this.path[this.path.length - 1];
             ctx.beginPath();
-            ctx.arc(endPoint.x, endPoint.y, 28, 0, Math.PI * 2);
-            ctx.fillStyle = '#ef4444';
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 3;
-            ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 12px system-ui, sans-serif';
@@ -187,12 +175,6 @@ class GameMap {
 
             const startPoint = this.path[0];
             ctx.beginPath();
-            ctx.arc(startPoint.x, startPoint.y, 22, 0, Math.PI * 2);
-            ctx.fillStyle = '#3b82f6';
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 10px system-ui, sans-serif';

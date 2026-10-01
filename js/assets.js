@@ -384,34 +384,19 @@ class AssetManager {
 
     addSniperAssets(list) {
 
-        // IMPORTANT:
-        // Sniper files are directly inside:
-        //
-        // assets/towers/sniper/
-        //
-        // There is NO "regular" folder.
-
-        // ---------------------------------------------------------
-        // Regular
-        // ---------------------------------------------------------
-
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
                 `sniper_regular_${i}`,
-                `assets/towers/sniper/sniper${i}.svg`
+                `assets/towers/sniper/regular/sniper${i}.svg`
             );
         }
-
-        // ---------------------------------------------------------
-        // Red
-        // ---------------------------------------------------------
 
         for (let i = 0; i <= 4; i++) {
             this.add(
                 list,
                 `sniper_red_${i}`,
-                `assets/towers/sniper/sniper${i}_red.svg`
+                `assets/towers/sniper/red/sniper${i}_red.svg`
             );
         }
 
@@ -423,7 +408,7 @@ class AssetManager {
             this.add(
                 list,
                 `sniper_farmer_${i}`,
-                `assets/towers/sniper/sniper${i}_farmer.svg`
+                `assets/towers/sniper/farmer/sniper${i}_farmer.svg`
             );
         }
     }

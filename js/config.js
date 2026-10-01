@@ -175,6 +175,7 @@ const TOWERS = {
         skins: [
             { id: 'default', name: 'Default', badgeColor: '#3b82f6' },
             { id: 'red', name: 'Red Operative', badgeColor: '#ef4444', crateType: 'basic' },
+            { id: 'plant', name: 'Plantgunner', badgeColor: '#ef4444', crateType: 'deluxe' },
             { id: 'gold', name: 'Golden Scout', badgeColor: '#facc15', crateType: 'golden' }
         ],
         upgrades: [
@@ -217,6 +218,8 @@ const TOWERS = {
         icon: '🎯',
         skins: [
             { id: 'default', name: 'Default', badgeColor: '#eab308' },
+            { id: 'red', name: 'Red Sniper', badgeColor: '#eab308' },
+            { id: 'farmer', name: 'Farm Defender', badgeColor: '#facc15', crateType: 'deluxe' },
             { id: 'gold', name: 'Golden Sniper', badgeColor: '#facc15', crateType: 'golden' }
       ],
 
@@ -607,6 +610,22 @@ const SKIN_CRATES = {
         currency: 'coins',
         icon: '📦',
         desc: 'Contains the most basic skins. For cheap prices... Currently there is one.'
+    },
+    deluxe: {
+        id: 'deluxe',
+        name: 'Deluxe Crate',
+        price: 2500,
+        currency: 'coins',
+        icon: '🎁',
+        desc: 'Contains skins! More ttext here yeah blah blah blah blah blahe eh'
+    },
+    ultra: {
+        id: 'ultra',
+        name: 'Deluxe Crate',
+        price: 5,
+        currency: 'gems',
+        icon: '🎁',
+        desc: 'Super Good Skins!!! More ttext here yeah blah blah blah blah blahe eh'
     },
     golden: {
         id: 'golden',

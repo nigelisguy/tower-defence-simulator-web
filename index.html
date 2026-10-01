@@ -138,103 +138,288 @@
         <!-- IN-GAME MATCH INTERFACE                                   -->
         <!-- ========================================================= -->
         <div id="inGameUI" class="hidden">
+
+            <!-- LEFT HUD PANEL -->
             <div class="in-game-left-panel">
+
                 <div class="brand">
                     <span></span> 0.0.1
                 </div>
 
-                <div class="hud-stats-vertical">
-                    <div class="hud-pill cash">
-                        <span class="hud-pill-label">CASH</span>
-                        <div class="hud-pill-val" style="color:var(--accent-green);">
-                            <img src="assets/ui/variables/money.svg" class="svg-icon" alt="Cash">
-                            <span id="hudCash">$500</span>
-                        </div>
-                    </div>
+                <!-- CASH / WAVE / TOWERS / MODE -->
+                <div class="hud-stats">
+                    <div class="hud-stats-vertical">
 
-                    <div class="hud-pill hp">
-                        <span class="hud-pill-label">HEALTH</span>
-                        <div class="hud-pill-val" style="color:var(--accent-red);">
-                            <span>❤️</span>
-                            <span id="hudHp">100 / 100</span>
-                        </div>
-                    </div>
+                        <!-- CASH -->
+                        <div class="hud-pill cash">
+                            <img
+                                src="assets/ui/currencies/money.svg"
+                                class="hud-banner"
+                                alt="Cash"
+                            >
 
-                    <div class="hud-pill wave">
-                        <span class="hud-pill-label">WAVE</span>
-                        <div class="hud-pill-val" style="color:var(--accent-yellow);">
-                            <img src="assets/ui/variables/wave.svg" class="svg-icon" alt="Wave">
-                            <span id="hudWave">0 / 30</span>
+                            <div class="hud-pill-content">
+                                <span class="hud-pill-label">CASH</span>
+                                <span id="hudCash" class="hud-pill-number">$500</span>
+                            </div>
                         </div>
-                        <span id="hudWaveTimer" style="font-size:10px; color:#facc15;"></span>
-                    </div>
 
-                    <div class="hud-pill tower">
-                        <span class="hud-pill-label">TOWERS</span>
-                        <div class="hud-pill-val" style="color:var(--accent-blue);">
-                            <img src="assets/ui/variables/tower.svg" class="svg-icon" alt="Towers">
-                            <span id="hudTowerCount">0/40</span>
+                        <!-- WAVE -->
+                        <div class="hud-pill wave">
+                            <img
+                                src="assets/ui/currencies/wave.svg"
+                                class="hud-banner"
+                                alt="Wave"
+                            >
+
+                            <div class="hud-pill-content">
+                                <span class="hud-pill-label">WAVE</span>
+                                <span id="hudWave" class="hud-pill-number">0 / 30</span>
+                                <span id="hudWaveTimer" class="wave-timer"></span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="hud-pill">
-                        <span class="hud-pill-label">MODE</span>
-                        <div class="hud-pill-val" style="color:var(--accent-purple);" id="hudDifficulty">Intermediate</div>
+                        <!-- TOWERS -->
+                        <div class="hud-pill tower">
+                            <img
+                                src="assets/ui/currencies/tower.svg"
+                                class="hud-banner"
+                                alt="Towers"
+                            >
+
+                            <div class="hud-pill-content">
+                                <span class="hud-pill-label">TOWERS</span>
+                                <span id="hudTowerCount" class="hud-pill-number">0/40</span>
+                            </div>
+                        </div>
+
+                        <!-- MODE -->
+                        <div class="hud-pill mode">
+                            <div class="hud-pill-content">
+                                <span class="hud-pill-label">Now Playing:</span>
+                                <span id="hudDifficulty" class="hud-pill-number">
+                                    Intermediate
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="ability-hotkeys-heading">ABILITIES</div>
-                <div id="abilityHotkeysPanel" class="ability-hotkeys-panel"></div>
+
+                <!-- ABILITIES -->
+                <div class="ability-hotkeys-heading">
+                    ABILITIES
+                </div>
+
+                <div
+                    id="abilityHotkeysPanel"
+                    class="ability-hotkeys-panel"
+                ></div>
+
             </div>
 
+
+            <!-- CENTER HEALTH BAR -->
+            <div class="health-container">
+
+                <div class="health-bar">
+
+                    <div
+                        id="hudHealthFill"
+                        class="health-fill"
+                    ></div>
+
+                    <div class="health-text"
+                        <span id="hudHp">100 / 100</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOP RIGHT ACTIONS -->
             <div class="in-game-top-actions">
-                <button id="btnGameSpeed" class="btn-speed" onclick="toggleGameSpeed()">⚡ 1x</button>
-                <button id="btnMuteAudio" class="btn-speed" onclick="toggleAudioMute()">🔊</button>
-                <button id="btnStartWave" class="btn-start" style="padding:6px 12px; font-size:12px;" onclick="handleWaveButtonClick()">START WAVE</button>
-                <button class="btn-sell" style="padding:6px 12px; font-size:12px;" onclick="returnToMainMenu()">LEAVE</button>
+
+                <button
+                    id="btnGameSpeed"
+                    class="btn-speed"
+                    onclick="toggleGameSpeed()"
+                >
+                    ⚡ 1x
+                </button>
+
+                <button
+                    id="btnMuteAudio"
+                    class="btn-speed"
+                    onclick="toggleAudioMute()"
+                >
+                    🔊
+                </button>
+
+                <button
+                    id="btnStartWave"
+                    class="btn-start"
+                    style="padding:6px 12px; font-size:12px;"
+                    onclick="handleWaveButtonClick()"
+                >
+                    START WAVE
+                </button>
+
+                <button
+                    class="btn-sell"
+                    style="padding:6px 12px; font-size:12px;"
+                    onclick="returnToMainMenu()"
+                >
+                    LEAVE
+                </button>
+
             </div>
 
-            <div id="canvasContainer" style="flex:1; position:relative; display:flex; align-items:center; justify-content:center; background:#020617;">
-                <canvas id="gameCanvas" width="1000" height="650"></canvas>
 
-                <!-- In-Game Bottom Hotbar (Tower Card SVG buttons fill the slot box) -->
-                <div class="in-game-bottom-bar" id="inGameHotbar">
+            <!-- GAME CANVAS -->
+            <div
+                id="canvasContainer"
+                style="
+                    flex:1;
+                    position:relative;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    background:#020617;
+                    width:100vw;
+                    height:100vh;
+                    overflow:hidden;
+                "
+            >
+                <canvas
+                    id="gameCanvas"
+                    width="1250"
+                    height="850"
+                    style="
+                        display:block;
+                        width:100%;
+                        height:100%;
+                        object-fit:contain;
+                    "
+                ></canvas>
+            </div>
+
+                <!-- TOWER HOTBAR -->
+                <div
+                    class="in-game-bottom-bar"
+                    id="inGameHotbar"
+                >
                     <!-- Populated dynamically via JS -->
                 </div>
 
-                <!-- Consumable Hotbar (Bottom Right) -->
-                <div class="consumable-hotbar" id="inGameConsumableHotbar">
+
+                <!-- CONSUMABLE HOTBAR -->
+                <div
+                    class="consumable-hotbar"
+                    id="inGameConsumableHotbar"
+                >
                     <!-- Populated dynamically via JS -->
                 </div>
 
-                <!-- Tower Inspect Panel -->
-                <div id="towerInspectPanel" class="hidden">
+
+                <!-- TOWER INSPECTOR -->
+                <div
+                    id="towerInspectPanel"
+                    class="hidden"
+                >
+
                     <div class="inspect-header">
+
                         <div class="inspect-title">
                             <span id="inspectTowerIcon">🔫</span>
                             <span id="inspectTowerName">Scout (I)</span>
                         </div>
-                        <span id="inspectTowerPlacement" class="tower-card-type ground">GROUND</span>
+
+                        <span
+                            id="inspectTowerPlacement"
+                            class="tower-card-type ground"
+                        >
+                            GROUND
+                        </span>
+
                     </div>
 
-                    <div id="inspectKills" style="font-size:11px; color:#facc15; margin-bottom:6px;">Kills: 0 | Damage: 0</div>
-                    <div id="inspectTowerStats" class="inspect-stats">Damage: 2 | Speed: 0.5s\nRange: 100</div>
-                    <div id="inspectUpgradePaths" class="inspect-upgrade-paths"></div>
+
+                    <div
+                        id="inspectKills"
+                        style="
+                            font-size:11px;
+                            color:#facc15;
+                            margin-bottom:6px;
+                        "
+                    >
+                        Kills: 0 | Damage: 0
+                    </div>
+
+
+                    <div
+                        id="inspectTowerStats"
+                        class="inspect-stats"
+                    >
+                        Damage: 2 | Speed: 0.5s
+                        Range: 100
+                    </div>
+
+
+                    <div
+                        id="inspectUpgradePaths"
+                        class="inspect-upgrade-paths"
+                    ></div>
+
 
                     <div class="inspect-actions">
-                        <button id="inspectTargetModeBtn" class="btn-target" onclick="cycleSelectedTowerTargeting()">Target: First</button>
-                        <button id="btnUpgradeTower" class="btn-upgrade" onclick="upgradeSelectedTower()">UPGRADE [E] ($100)</button>
-                        <button id="btnRelocateTower" class="btn-upgrade" style="display:none;" onclick="gameEngine.beginTowerRelocation()">RELOCATE TOWER</button>
-                        <button id="btnSellTower" class="btn-sell" onclick="sellSelectedTower()">SELL [X] ($150)</button>
+
+                        <button
+                            id="inspectTargetModeBtn"
+                            class="btn-target"
+                            onclick="cycleSelectedTowerTargeting()"
+                        >
+                            Target: First
+                        </button>
+
+                        <button
+                            id="btnUpgradeTower"
+                            class="btn-upgrade"
+                            onclick="upgradeSelectedTower()"
+                        >
+                            UPGRADE[E]($100)
+                        </button>
+
+                        <button
+                            id="btnRelocateTower"
+                            class="btn-upgrade"
+                            style="display:none;"
+                            onclick="gameEngine.beginTowerRelocation()"
+                        >
+                            RELOCATE TOWER
+                        </button>
+
+                        <button
+                            id="btnSellTower"
+                            class="btn-sell"
+                            onclick="sellSelectedTower()"
+                        >
+                            SELL[X]($150)
+                        </button>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
-    </div>
 
     <!-- Match Setup Modal (Random 4 Maps Selector) -->
     <div id="matchSetupModal" class="modal-overlay hidden">
         <div class="modal-card">
-            <div class="modal-title" id="setupModalTitle">⚔️ ENTERING MATCH</div>
+            <div id="setupModalTitle">⚔️ ENTERING MATCH</div>
 
             <div>
                 <h3 style="margin-bottom:10px; color:#38bdf8;">Select Map</h3>
@@ -260,16 +445,16 @@
     <!-- Victory Modal -->
     <div id="victoryOverlay" class="modal-overlay hidden">
         <div class="modal-card" style="text-align:center;">
-            <div class="modal-title" style="color:#22c55e;">🏆VICTORY!</div>
+            <div currencies style="color:#22c55e;">🏆VICTORY!</div>
             <p id="victoryStats" style="white-space:pre-line; color:#cbd5e1; font-size:16px;"></p>
-            <button class="btn-start" onclick="returnToMainMenu()">RETURN TO LOBBY</button>
+            <button class="btn-start" onclick="returnToMainMenu()">VETO</button>
         </div>
     </div>
 
     <!-- Game Over Modal -->
     <div id="gameOverOverlay" class="modal-overlay hidden">
         <div class="modal-card" style="text-align:center;">
-            <div class="modal-title" style="color:#ef4444;">💀DEFEAT</div>
+            <div currencies style="color:#ef4444;">💀DEFEAT</div>
             <p id="gameOverStats" style="white-space:pre-line; color:#cbd5e1; font-size:16px;"></p>
             <button class="btn-start" onclick="returnToMainMenu()">RETURN TO LOBBY</button>
         </div>

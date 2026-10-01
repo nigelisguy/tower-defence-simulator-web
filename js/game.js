@@ -53,6 +53,20 @@ class GameEngine {
         this.commanderCallToArmsTimer = 0;
         this.commanderCallToArmsSpeed = 0;
         this.energyDrinkTimer = 0;
+        this.camera = {
+            x: 0,
+            y: 0,
+            zoom: 1,
+
+            minZoom: 0.5,
+            maxZoom: 2.5,
+
+            dragging: false,
+            lastX: 0,
+            lastY: 0
+        };
+
+        this.setupCameraControls();
 
         this.initEvents();
         this.initHotkeys();
@@ -94,22 +108,60 @@ class GameEngine {
         this.totalEnemiesDefeated = 0;
         this.totalCashEarned = this.cash;
 
+        this.camera.zoom = 1;
+
+        this.camera.x = Math.max(
+            0,
+            (this.gameMap.width - this.canvas.width) / 2
+        );
+
+        this.camera.y = Math.max(
+            0,
+            (this.gameMap.height - this.canvas.height) / 2
+        );
+
+        this.clampCamera();
         this.updateUI();
     }
 
     initEvents() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            this.mouseX = (e.clientX - rect.left) * scaleX;
-            this.mouseY = (e.clientY - rect.top) * scaleY;
+
+            // Convert browser coordinates to actual canvas coordinates.
+            const screenX =
+                (e.clientX - rect.left) *
+                (this.canvas.width / rect.width);
+
+            const screenY =
+                (e.clientY - rect.top) *
+                (this.canvas.height / rect.height);
+
+            // Convert screen coordinates -> world/map coordinates.
+            this.mouseX =
+                this.camera.x +
+                screenX / this.camera.zoom;
+
+            this.mouseY =
+                this.camera.y +
+                screenY / this.camera.zoom;
+
+            // -----------------------------------------
+            // ENEMY HOVER
+            // -----------------------------------------
 
             let foundHover = null;
+
             for (let i = this.enemies.length - 1; i >= 0; i--) {
                 const enemy = this.enemies[i];
+
                 if (enemy.dead || enemy.reachedEnd) continue;
-                const dist = Math.hypot(enemy.x - this.mouseX, enemy.y - this.mouseY);
+
+                const dist = Math.hypot(
+                    enemy.x - this.mouseX,
+                    enemy.y - this.mouseY
+                );
+
                 if (dist <= enemy.size + 6) {
                     foundHover = enemy;
                     enemy.isHovered = true;
@@ -118,12 +170,23 @@ class GameEngine {
             }
 
             this.enemies.forEach(e => {
-                if (e !== foundHover) e.isHovered = false;
+                if (e !== foundHover) {
+                    e.isHovered = false;
+                }
             });
+
             this.hoveredEnemy = foundHover;
 
+            // -----------------------------------------
+            // TOWER HOVER
+            // -----------------------------------------
+
             this.towers.forEach(t => {
-                const dist = Math.hypot(t.x - this.mouseX, t.y - this.mouseY);
+                const dist = Math.hypot(
+                    t.x - this.mouseX,
+                    t.y - this.mouseY
+                );
+
                 t.hovered = dist <= 20;
             });
         });
@@ -131,33 +194,155 @@ class GameEngine {
         this.canvas.addEventListener('click', (e) => {
             sounds.init();
 
+            // Don't treat a camera drag as a game click.
+            if (this.camera.wasDragging) {
+                this.camera.wasDragging = false;
+                return;
+            }
+
             if (this.relocationSource) {
                 this.handleTowerRelocationClick();
                 return;
             }
 
             if (this.selectedShopTowerKey) {
-                this.placeTower(this.selectedShopTowerKey, this.mouseX, this.mouseY);
+                this.placeTower(
+                    this.selectedShopTowerKey,
+                    this.mouseX,
+                    this.mouseY
+                );
                 return;
             }
 
             let clickedTower = null;
+
             for (let t of this.towers) {
-                if (Math.hypot(t.x - this.mouseX, t.y - this.mouseY) <= 22) {
+                if (
+                    Math.hypot(
+                        t.x - this.mouseX,
+                        t.y - this.mouseY
+                    ) <= 22
+                ) {
                     clickedTower = t;
                     break;
                 }
             }
 
-            this.towers.forEach(t => t.selected = false);
+            this.towers.forEach(t => {
+                t.selected = false;
+            });
+
             this.selectedTower = clickedTower;
+
             if (clickedTower) {
                 clickedTower.selected = true;
             }
+
             this.updateTowerInspectUI();
         });
     }
+    getAbilityDefinitions() {
+        const abilities = [];
 
+        this.towers.forEach(tower => {
+            let ability = null;
+
+            if (tower.typeKey === 'commander') {
+                ability = {
+                    id: 'call_to_arms',
+                    key: 'q',
+                    name: 'Call to Arms'
+                };
+            } else if (tower.typeKey === 'dj') {
+                ability = {
+                    id: 'drop_the_beat',
+                    key: 'r',
+                    name: 'Drop the Beat'
+                };
+            } else if (
+                tower.typeKey === 'enforcer' &&
+                tower.upgradePath === 'top'
+            ) {
+                ability = {
+                    id: 'relocate',
+                    key: 'f',
+                    name: 'Relocate'
+                };
+            } else if (tower.typeKey === 'kingpin') {
+                if (tower.troopType === 'runner') {
+                    ability = {
+                        id: 'kingpin_runners',
+                        key: 'g',
+                        name: 'Deploy Runners'
+                    };
+                } else {
+                    ability = {
+                        id: 'kingpin_crew',
+                        key: 'g',
+                        name: 'Deploy Crew'
+                    };
+                }
+            } else if (
+                tower.typeKey === 'enforcer' &&
+                tower.upgradePath === 'bottom'
+            ) {
+                ability = {
+                    id: 'vehicle_strike',
+                    key: 'v',
+                    name: 'Vehicle Strike'
+                };
+            }
+
+            if (
+                ability &&
+                !abilities.some(existing => existing.id === ability.id)
+            ) {
+                abilities.push(ability);
+            }
+        });
+
+        return abilities;
+    }
+
+    getAbilityTowers(abilityId) {
+        return this.towers.filter(tower => {
+            switch (abilityId) {
+                case 'call_to_arms':
+                    return tower.typeKey === 'commander';
+
+                case 'drop_the_beat':
+                    return tower.typeKey === 'dj';
+
+                case 'relocate':
+                    return (
+                        tower.typeKey === 'enforcer' &&
+                        tower.upgradePath === 'top'
+                    );
+
+                case 'kingpin_crew':
+                    return (
+                        tower.typeKey === 'kingpin' &&
+                        tower.troopType &&
+                        tower.troopType !== 'runner'
+                    );
+
+                case 'kingpin_runners':
+                    return (
+                        tower.typeKey === 'kingpin' &&
+                        tower.troopType === 'runner'
+                    );
+
+                case 'vehicle_strike':
+                    return (
+                        tower.typeKey === 'enforcer' &&
+                        tower.upgradePath === 'bottom'
+                    );
+
+                default:
+                    return false;
+            }
+        });
+    }
     initHotkeys() {
         window.addEventListener('keydown', (e) => {
             if (e.target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
@@ -291,7 +476,53 @@ class GameEngine {
             });
         });
     }
+    clampCamera() {
+        const canvas = this.canvas;
 
+        if (!canvas || !this.gameMap) return;
+
+        const mapWidth = this.gameMap.width;
+        const mapHeight = this.gameMap.height;
+
+        if (
+            !Number.isFinite(mapWidth) ||
+            !Number.isFinite(mapHeight)
+        ) {
+            return;
+        }
+
+        const viewWidth =
+            canvas.width / this.camera.zoom;
+
+        const viewHeight =
+            canvas.height / this.camera.zoom;
+
+        if (mapWidth <= viewWidth) {
+            this.camera.x =
+                (mapWidth - viewWidth) / 2;
+        } else {
+            this.camera.x = Math.max(
+                0,
+                Math.min(
+                    this.camera.x,
+                    mapWidth - viewWidth
+                )
+            );
+        }
+
+        if (mapHeight <= viewHeight) {
+            this.camera.y =
+                (mapHeight - viewHeight) / 2;
+        } else {
+            this.camera.y = Math.max(
+                0,
+                Math.min(
+                    this.camera.y,
+                    mapHeight - viewHeight
+                )
+            );
+        }
+    }
     getTowerSupportBuffs(tower) {
         const buffs = this.towers.reduce((currentBuffs, supportTower) => {
             if (supportTower === tower) return currentBuffs;
@@ -341,26 +572,122 @@ class GameEngine {
         if (baseCost === null || baseCost === undefined) return null;
         return Math.max(0, Math.round(baseCost * (1 - Math.min(0.8, this.getTowerUpgradeDiscount(tower)))));
     }
+    setupCameraControls() {
+        const canvas = this.canvas;
 
-    getAbilityTowers(abilityId) {
-        if (abilityId === 'call_to_arms') return this.towers.filter(tower => tower.typeKey === 'commander');
-        if (abilityId === 'drop_the_beat') return this.towers.filter(tower => tower.typeKey === 'dj' && tower.upgradePath);
-        if (abilityId === 'relocate') return this.towers.filter(tower => tower.typeKey === 'enforcer' && tower.upgradePath === 'top');
-        if (abilityId === 'kingpin_crew' || abilityId === 'kingpin_runners') return this.towers.filter(tower => tower.typeKey === 'kingpin');
-        if (abilityId === 'vehicle_strike') return this.towers.filter(tower => tower.typeKey === 'enforcer' && tower.upgradePath === 'bottom');
-        return [];
-    }
+        if (!canvas) return;
 
-    getAbilityDefinitions() {
-        const abilities = [
-            { id: 'call_to_arms', key: 'f', name: 'Call to Arms' },
-            { id: 'drop_the_beat', key: 'r', name: 'Drop the Beat' },
-            { id: 'relocate', key: 't', name: 'Relocate Tower' },
-            { id: 'kingpin_crew', key: 'g', name: 'Call Crew' },
-            { id: 'vehicle_strike', key: 'v', name: 'Vehicle Strike' },
-            { id: 'kingpin_runners', key: 'b', name: 'Send Money Runners' }
-        ];
-        return abilities.filter(ability => this.getAbilityTowers(ability.id).length > 0);
+        canvas.style.touchAction = 'none';
+
+        this.camera.dragging = false;
+        this.camera.wasDragging = false;
+        this.camera.dragStartX = 0;
+        this.camera.dragStartY = 0;
+        this.camera.dragMoved = false;
+
+        canvas.addEventListener('mousedown', (e) => {
+            // Left or middle mouse button.
+            if (e.button !== 0 && e.button !== 1) return;
+
+            this.camera.dragging = true;
+            this.camera.dragMoved = false;
+            this.camera.wasDragging = false;
+
+            this.camera.lastX = e.clientX;
+            this.camera.lastY = e.clientY;
+
+            this.camera.dragStartX = e.clientX;
+            this.camera.dragStartY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!this.camera.dragging) return;
+
+            const dx = e.clientX - this.camera.lastX;
+            const dy = e.clientY - this.camera.lastY;
+
+            this.camera.lastX = e.clientX;
+            this.camera.lastY = e.clientY;
+
+            // Don't count tiny mouse movement as dragging.
+            const totalMove = Math.hypot(
+                e.clientX - this.camera.dragStartX,
+                e.clientY - this.camera.dragStartY
+            );
+
+            if (totalMove > 5) {
+                this.camera.dragMoved = true;
+                this.camera.wasDragging = true;
+            }
+
+            if (!this.camera.dragMoved) return;
+
+            // Convert screen movement to world movement.
+            this.camera.x -= dx / this.camera.zoom;
+            this.camera.y -= dy / this.camera.zoom;
+
+            this.clampCamera();
+        });
+
+        window.addEventListener('mouseup', () => {
+            this.camera.dragging = false;
+        });
+
+        // ==========================================
+        // MOUSE WHEEL / TRACKPAD ZOOM
+        // ==========================================
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            const rect = canvas.getBoundingClientRect();
+
+            const screenX =
+                (e.clientX - rect.left) *
+                (canvas.width / rect.width);
+
+            const screenY =
+                (e.clientY - rect.top) *
+                (canvas.height / rect.height);
+
+            // World position underneath mouse BEFORE zoom.
+            const worldX =
+                this.camera.x +
+                screenX / this.camera.zoom;
+
+            const worldY =
+                this.camera.y +
+                screenY / this.camera.zoom;
+
+            // Smooth-ish zoom amount.
+            const zoomFactor =
+                e.deltaY < 0 ? 1.1 : 0.9;
+
+            const oldZoom = this.camera.zoom;
+
+            this.camera.zoom *= zoomFactor;
+
+            this.camera.zoom = Math.max(
+                this.camera.minZoom,
+                Math.min(
+                    this.camera.maxZoom,
+                    this.camera.zoom
+                )
+            );
+
+            // Keep the exact point under the cursor
+            // in the same place after zooming.
+            this.camera.x =
+                worldX -
+                screenX / this.camera.zoom;
+
+            this.camera.y =
+                worldY -
+                screenY / this.camera.zoom;
+
+            this.clampCamera();
+
+        }, { passive: false });
     }
 
     renderAbilityHotkeys() {
@@ -842,46 +1169,113 @@ class GameEngine {
     render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // ==========================================
+        // CAMERA / MAP
+        // ==========================================
+
+        this.ctx.save();
+
+        this.ctx.scale(this.camera.zoom, this.camera.zoom);
+        this.ctx.translate(-this.camera.x, -this.camera.y);
+
         this.gameMap.render(this.ctx);
 
         this.towers.forEach(t => {
-            const commanderNearby = this.towers.find(c => c.typeKey === 'commander' && Math.hypot(c.x - t.x, c.y - t.y) <= c.buffRange);
-            t.render(this.ctx, !!commanderNearby || this.commanderCallToArmsTimer > 0 || this.energyDrinkTimer > 0);
+            const commanderNearby = this.towers.find(
+                c =>
+                    c.typeKey === 'commander' &&
+                    Math.hypot(c.x - t.x, c.y - t.y) <= c.buffRange
+            );
+
+            t.render(
+                this.ctx,
+                !!commanderNearby ||
+                this.commanderCallToArmsTimer > 0 ||
+                this.energyDrinkTimer > 0
+            );
         });
 
         this.enemies.forEach(e => e.render(this.ctx));
 
         this.alliedTroops.forEach(troop => {
-            const position = this.gameMap.getPositionAtDistance(troop.distanceTraversed);
-            this.ctx.fillStyle = troop.type === 'runner' ? '#facc15' : troop.type === 'gunner' ? '#38bdf8' : '#22c55e';
+            const position = this.gameMap.getPositionAtDistance(
+                troop.distanceTraversed
+            );
+
+            this.ctx.fillStyle =
+                troop.type === 'runner'
+                    ? '#facc15'
+                    : troop.type === 'gunner'
+                        ? '#38bdf8'
+                        : '#22c55e';
+
             this.ctx.beginPath();
-            this.ctx.arc(position.x, position.y, 9, 0, Math.PI * 2);
-            this.ctx.fill();
             this.ctx.fillStyle = '#0f172a';
             this.ctx.font = '10px sans-serif';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText(troop.type === 'runner' ? '$' : troop.type === 'gunner' ? 'G' : 'B', position.x, position.y);
 
-            // HP Bar
-            const barW = 18, barH = 3;
+            this.ctx.fillText(
+                troop.type === 'runner'
+                    ? '$'
+                    : troop.type === 'gunner'
+                        ? 'G'
+                        : 'B',
+                position.x,
+                position.y
+            );
+
+            const barW = 18;
+            const barH = 3;
             const barX = position.x - barW / 2;
             const barY = position.y - 14;
             const hpPct = Math.max(0, troop.hp / troop.maxHp);
+
             this.ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            this.ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-            this.ctx.fillStyle = hpPct > 0.5 ? '#22c55e' : hpPct > 0.25 ? '#eab308' : '#ef4444';
-            this.ctx.fillRect(barX, barY, barW * hpPct, barH);
+            this.ctx.fillRect(
+                barX - 1,
+                barY - 1,
+                barW + 2,
+                barH + 2
+            );
+
+            this.ctx.fillStyle =
+                hpPct > 0.5
+                    ? '#22c55e'
+                    : hpPct > 0.25
+                        ? '#eab308'
+                        : '#ef4444';
+
+            this.ctx.fillRect(
+                barX,
+                barY,
+                barW * hpPct,
+                barH
+            );
         });
 
         this.vehicles.forEach(vehicle => {
-            const position = this.gameMap.getPositionAtDistance(vehicle.distanceTraversed);
+            const position = this.gameMap.getPositionAtDistance(
+                vehicle.distanceTraversed
+            );
+
             this.ctx.fillStyle = '#0f766e';
-            this.ctx.fillRect(position.x - 12, position.y - 8, 24, 16);
+            this.ctx.fillRect(
+                position.x - 12,
+                position.y - 8,
+                24,
+                16
+            );
+
             this.ctx.fillStyle = '#ffffff';
             this.ctx.font = '10px sans-serif';
             this.ctx.textAlign = 'center';
-            this.ctx.fillText('E', position.x, position.y);
+
+            this.ctx.fillText(
+                'E',
+                position.x,
+                position.y
+            );
         });
 
         this.projectiles.forEach(p => {
@@ -899,90 +1293,245 @@ class GameEngine {
 
         this.particles.forEach(p => {
             this.ctx.save();
-            this.ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+
+            this.ctx.globalAlpha =
+                Math.max(0, p.life / p.maxLife);
+
             this.ctx.beginPath();
-            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+
             this.ctx.fillStyle = p.color;
             this.ctx.fill();
+
             this.ctx.restore();
         });
 
+
         if (this.selectedShopTowerKey) {
             const config = TOWERS[this.selectedShopTowerKey];
-            const towerLimit = config.placementLimit || 8;
-            const towerCount = this.towers.filter(tower => tower.typeKey === config.id).length;
-            const isValid = towerCount < towerLimit && this.gameMap.isValidPlacement(this.mouseX, this.mouseY, config.placement, this.towers);
+
+            const towerLimit =
+                config.placementLimit || 8;
+
+            const towerCount =
+                this.towers.filter(
+                    tower => tower.typeKey === config.id
+                ).length;
+
+            const isValid =
+                towerCount < towerLimit &&
+                this.gameMap.isValidPlacement(
+                    this.mouseX,
+                    this.mouseY,
+                    config.placement,
+                    this.towers
+                );
 
             this.ctx.save();
+
             this.ctx.beginPath();
-            this.ctx.arc(this.mouseX, this.mouseY, config.upgrades[0].range, 0, Math.PI * 2);
-            this.ctx.fillStyle = isValid ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.2)';
+            this.ctx.arc(
+                this.mouseX,
+                this.mouseY,
+                config.upgrades[0].range,
+                0,
+                Math.PI * 2
+            );
+
+            this.ctx.fillStyle =
+                isValid
+                    ? 'rgba(34, 197, 94, 0.15)'
+                    : 'rgba(239, 68, 68, 0.2)';
+
             this.ctx.fill();
-            this.ctx.strokeStyle = isValid ? '#22c55e' : '#ef4444';
+
+            this.ctx.strokeStyle =
+                isValid
+                    ? '#22c55e'
+                    : '#ef4444';
+
             this.ctx.lineWidth = 2;
             this.ctx.stroke();
 
             this.ctx.beginPath();
-            this.ctx.arc(this.mouseX, this.mouseY, 16, 0, Math.PI * 2);
-            this.ctx.fillStyle = isValid ? config.color : 'rgba(239, 68, 68, 0.7)';
+            this.ctx.arc(
+                this.mouseX,
+                this.mouseY,
+                16,
+                0,
+                Math.PI * 2
+            );
+
+            this.ctx.fillStyle =
+                isValid
+                    ? config.color
+                    : 'rgba(239, 68, 68, 0.7)';
+
             this.ctx.fill();
 
             this.ctx.restore();
         }
 
+
+        this.ctx.restore();
+
+
         if (this.hoveredEnemy && !this.hoveredEnemy.dead) {
-            this.renderEnemyInspectorTooltip(this.hoveredEnemy);
+            this.renderEnemyInspectorTooltip(
+                this.hoveredEnemy
+            );
         }
     }
 
     renderEnemyInspectorTooltip(enemy) {
         const ctx = this.ctx;
-        ctx.save();
 
         const boxWidth = 220;
-        const boxHeight = 120 + (enemy.modifiers.length > 0 ? 20 : 0);
-        let boxX = enemy.x + 20;
-        let boxY = enemy.y - 40;
+        const boxHeight =
+            120 +
+            (enemy.modifiers.length > 0 ? 20 : 0);
 
-        if (boxX + boxWidth > this.canvas.width) boxX = enemy.x - boxWidth - 20;
-        if (boxY + boxHeight > this.canvas.height) boxY = this.canvas.height - boxHeight - 10;
-        if (boxY < 10) boxY = 10;
+        // ==========================================
+        // WORLD -> SCREEN
+        // ==========================================
+
+        const enemyScreenX =
+            (enemy.x - this.camera.x) *
+            this.camera.zoom;
+
+        const enemyScreenY =
+            (enemy.y - this.camera.y) *
+            this.camera.zoom;
+
+        // Put tooltip beside the mouse, not beside
+        // the transformed world coordinate.
+        let boxX = enemyScreenX + 20;
+        let boxY = enemyScreenY - 40;
+
+        // Keep tooltip inside canvas.
+        if (
+            boxX + boxWidth >
+            this.canvas.width
+        ) {
+            boxX =
+                enemyScreenX -
+                boxWidth -
+                20;
+        }
+
+        if (
+            boxY + boxHeight >
+            this.canvas.height
+        ) {
+            boxY =
+                this.canvas.height -
+                boxHeight -
+                10;
+        }
+
+        if (boxY < 10) {
+            boxY = 10;
+        }
+
+        if (boxX < 10) {
+            boxX = 10;
+        }
+
+        // ==========================================
+        // DRAW SCREEN-SPACE UI
+        // ==========================================
+
+        ctx.save();
 
         ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
-        ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+        ctx.fillRect(
+            boxX,
+            boxY,
+            boxWidth,
+            boxHeight
+        );
+
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 2;
-        ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+        ctx.strokeRect(
+            boxX,
+            boxY,
+            boxWidth,
+            boxHeight
+        );
 
         ctx.fillStyle = '#38bdf8';
-        ctx.font = 'bold 14px system-ui, sans-serif';
+        ctx.font =
+            'bold 14px system-ui, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText(enemy.name, boxX + 12, boxY + 22);
+        ctx.textBaseline = 'alphabetic';
+
+        ctx.fillText(
+            enemy.name,
+            boxX + 12,
+            boxY + 22
+        );
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '12px system-ui, sans-serif';
-        ctx.fillText(`HP: ${Math.round(enemy.hp)} / ${enemy.maxHp}`, boxX + 12, boxY + 42);
+        ctx.font =
+            '12px system-ui, sans-serif';
+
+        ctx.fillText(
+            `HP: ${Math.round(enemy.hp)} / ${enemy.maxHp}`,
+            boxX + 12,
+            boxY + 42
+        );
 
         if (enemy.maxShield > 0) {
             ctx.fillStyle = '#60a5fa';
-            ctx.fillText(`Shield: ${Math.round(enemy.shield)} / ${enemy.maxShield}`, boxX + 12, boxY + 58);
+
+            ctx.fillText(
+                `Shield: ${Math.round(enemy.shield)} / ${enemy.maxShield}`,
+                boxX + 12,
+                boxY + 58
+            );
         }
 
         ctx.fillStyle = '#94a3b8';
-        ctx.font = '11px system-ui, sans-serif';
+        ctx.font =
+            '11px system-ui, sans-serif';
+
         const attribs = [];
+
         if (enemy.hidden) attribs.push('👁️ Hidden');
         if (enemy.flying) attribs.push('🦅 Flying');
         if (enemy.lead) attribs.push('🛡️ Lead');
-        ctx.fillText(`Types: ${attribs.length > 0 ? attribs.join(', ') : 'Standard'}`, boxX + 12, boxY + 76);
 
-        ctx.fillText(`Speed: ${Math.round(enemy.speed)} | Reward: $${enemy.reward}`, boxX + 12, boxY + 94);
+        ctx.fillText(
+            `Types: ${
+                attribs.length > 0
+                    ? attribs.join(', ')
+                    : 'Standard'
+            }`,
+            boxX + 12,
+            boxY + 76
+        );
+
+        ctx.fillText(
+            `Speed: ${Math.round(enemy.speed)} | Reward: $${enemy.reward}`,
+            boxX + 12,
+            boxY + 94
+        );
 
         if (enemy.modifiers.length > 0) {
-            const modNames = enemy.modifiers.map(m => m.badge).join(' ');
+            const modNames =
+                enemy.modifiers
+                    .map(m => m.badge)
+                    .join(' ');
+
             ctx.fillStyle = '#facc15';
-            ctx.font = 'bold 11px system-ui, sans-serif';
-            ctx.fillText(`Mods: ${modNames}`, boxX + 12, boxY + 114);
+            ctx.font =
+                'bold 11px system-ui, sans-serif';
+
+            ctx.fillText(
+                `Mods: ${modNames}`,
+                boxX + 12,
+                boxY + 114
+            );
         }
 
         ctx.restore();
@@ -1107,14 +1656,14 @@ class GameEngine {
             upgBtn.innerText = 'CHOOSE UPGRADE PATH';
             upgBtn.disabled = true;
         } else if (upgradeCost !== null) {
-            upgBtn.innerText = `UPGRADE ($${upgradeCost})`;
+            upgBtn.innerText = `UPGRADE [E] ($${upgradeCost})`;
             upgBtn.disabled = this.cash < upgradeCost;
         } else {
             upgBtn.innerText = 'MAX LEVEL';
             upgBtn.disabled = true;
         }
 
-        document.getElementById('btnSellTower').innerText = `SELL ($${t.getSellValue()})`;
+        document.getElementById('btnSellTower').innerText = `SELL [X] ($${t.getSellValue()})`;
 
         const relocateBtn = document.getElementById('btnRelocateTower');
         if (relocateBtn) {

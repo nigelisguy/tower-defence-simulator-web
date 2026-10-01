@@ -572,43 +572,58 @@ body {
 /* ========================================================= */
 /* IN-GAME HUD & BOTTOM HOTBAR                               */
 /* ========================================================= */
+
 #inGameUI {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
     position: relative;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
 }
 
-/* In-Game Left Panel (vertical HUD on the left side) */
+/* LEFT PANEL */
 .in-game-left-panel {
     position: absolute;
     top: 0;
     left: 0;
-    width: 170px;
+
+    width: 220px;
     height: 100%;
+
+    padding: 14px 12px;
+
     background: var(--panel-bg);
     border-right: 2px solid var(--panel-border);
+
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    padding: 14px 12px;
     gap: 10px;
+
     z-index: 20;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
 }
 
 .in-game-left-panel .brand {
-    font-weight: 900;
-    font-size: 16px;
-    color: var(--accent-blue);
     display: flex;
     align-items: center;
     gap: 6px;
+
     padding-bottom: 10px;
-    border-bottom: 2px solid var(--panel-border);
     margin-bottom: 4px;
+
+    border-bottom: 2px solid var(--panel-border);
+
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--accent-blue);
+}
+
+/* ========================================================= */
+/* HUD STATS                                                  */
+/* ========================================================= */
+
+.hud-stats {
+    display: flex;
+    width: 100%;
 }
 
 .hud-stats-vertical {
@@ -617,8 +632,155 @@ body {
     gap: 8px;
 }
 
+/* CASH / WAVE / TOWERS */
+.hud-pill {
+    position: relative;
+
+    width: 200px;
+    height: 100px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+}
+
+/* SVG BANNER */
+.hud-banner {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: fill;
+
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hud-pill-content {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+    padding: 0 18px;
+    overflow: hidden;
+}
+
+.hud-pill-number {
+    max-width: 100%;
+
+    font-size: clamp(11px, 1.2vw, 15px);
+    font-weight: 900;
+    line-height: 1;
+
+    color: white;
+    white-space: nowrap;
+
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.8),
+        0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+.hud-pill-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: white;
+}
+
+
+.wave-timer {
+    font-size: 10px;
+    color: var(--accent-yellow);
+}
+
+/* MODE */
+.hud-pill.mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--panel-border);
+}
+
+/* ========================================================= */
+/* HEALTH                                                    */
+/* ========================================================= */
+.health-container {
+    position: fixed !important;
+    top: 10px !important;
+    left: 50% !important;
+
+    width: 500px;
+    height: 30px;
+
+    transform: translateX(-50%) !important;
+
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.health-bar {
+    position: relative;
+    width: 500px;
+    height: 30px;
+
+    overflow: hidden;
+
+    background: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.health-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: var(--accent-red);
+
+    transition: width 0.2s ease;
+}
+
+.health-text {
+    position: absolute;
+    inset: 0;
+
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    color: white;
+    font-size: 15px;
+    font-weight: 900;
+
+    text-shadow: 0 1px 3px #000;
+}
+
+/* ========================================================= */
+/* ABILITIES                                                  */
+/* ========================================================= */
+
 .ability-hotkeys-heading {
     margin-top: 4px;
+
     color: var(--text-muted);
     font-size: 10px;
     font-weight: 900;
@@ -628,6 +790,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 6px;
+
     max-height: 38vh;
     overflow-y: auto;
 }
@@ -636,11 +799,13 @@ body {
     display: grid;
     grid-template-columns: 26px minmax(0, 1fr);
     align-items: center;
+
     gap: 2px 7px;
     padding: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
 
     background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
     color: var(--text-primary);
     text-align: left;
     cursor: pointer;
@@ -648,10 +813,13 @@ body {
 
 .ability-hotkey kbd {
     grid-row: span 2;
+
     display: grid;
     place-items: center;
+
     width: 24px;
     aspect-ratio: 1;
+
     border: 1px solid rgba(56, 189, 248, 0.55);
 
     color: #7dd3fc;
@@ -661,6 +829,7 @@ body {
 
 .ability-hotkey span {
     overflow-wrap: anywhere;
+
     font-size: 10px;
     font-weight: 800;
 }
@@ -680,86 +849,63 @@ body {
     font-size: 10px;
 }
 
-/* In-Game Top-Right Actions Bar */
+/* ========================================================= */
+/* TOP ACTIONS                                                */
+/* ========================================================= */
+
 .in-game-top-actions {
     position: absolute;
     top: 12px;
     right: 16px;
+
     display: flex;
     align-items: center;
     gap: 8px;
+
     z-index: 20;
 }
 
-.hud-pill {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 5px 12px;
+/* ========================================================= */
+/* TOWER HOTBAR                                               */
+/* ========================================================= */
 
-}
-
-.hud-pill.cash { border-color: rgba(34, 197, 94, 0.3); }
-.hud-pill.hp { border-color: rgba(239, 68, 68, 0.3); }
-.hud-pill.wave { border-color: rgba(250, 204, 21, 0.3); }
-.hud-pill.tower { border-color: rgba(56, 189, 248, 0.3); }
-
-.hud-pill-label {
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.hud-pill-val {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.svg-icon {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-/* In-Game Bottom Hotbar (Tower Card SVG buttons fill the box!) */
 .in-game-bottom-bar {
     position: absolute;
     bottom: 15px;
     left: 50%;
+
     transform: translateX(-50%);
+
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(15, 23, 42, 0.92);
-    border: 2px solid var(--panel-border);
+
     padding: 8px 14px;
 
+    background: rgba(15, 23, 42, 0.92);
+    border: 2px solid var(--panel-border);
+
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+
     z-index: 25;
 }
 
 .hotbar-slot {
+    position: relative;
+
     width: 64px;
     height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
     background: rgba(30, 41, 59, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.15);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
     transition: all 0.2s;
 }
 
@@ -784,39 +930,49 @@ body {
     position: absolute;
     top: 3px;
     left: 4px;
-    font-size: 10px;
-    font-weight: 900;
-    color: #ffffff;
-    background: rgba(0, 0, 0, 0.65);
+    z-index: 5;
+
     padding: 1px 4px;
 
-    z-index: 5;
+    background: rgba(0, 0, 0, 0.65);
+
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
-/* Consumable Hotbar */
+/* ========================================================= */
+/* CONSUMABLE HOTBAR                                          */
+/* ========================================================= */
+
 .consumable-hotbar {
     position: absolute;
-    bottom: 15px;
     right: 20px;
+    bottom: 15px;
+
     display: flex;
     gap: 8px;
+
     z-index: 25;
 }
 
 .consumable-slot-btn {
+    position: relative;
+
     width: 52px;
     height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     background: rgba(15, 23, 42, 0.9);
     border: 2px solid var(--accent-purple);
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
+    transition: transform 0.2s;
 }
 
 .consumable-slot-btn:hover {
@@ -825,25 +981,31 @@ body {
 
 .consumable-count {
     position: absolute;
-    bottom: 2px;
     right: 4px;
+    bottom: 2px;
+
+    color: var(--accent-yellow);
     font-size: 10px;
     font-weight: 900;
-    color: var(--accent-yellow);
 }
 
-/* Tower Inspector Floating Panel */
+/* ========================================================= */
+/* TOWER INSPECTOR                                            */
+/* ========================================================= */
+
 #towerInspectPanel {
     position: absolute;
-    bottom: 100px;
     left: 20px;
+    bottom: 100px;
+
     width: 310px;
+    padding: 16px;
+
     background: var(--panel-bg);
     border: 2px solid var(--accent-blue);
 
-    padding: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+
     z-index: 30;
 }
 
@@ -851,6 +1013,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     margin-bottom: 10px;
 }
 
@@ -858,17 +1021,20 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 800;
+
     font-size: 16px;
+    font-weight: 800;
 }
 
 .inspect-stats {
-    font-size: 12px;
-    color: var(--text-muted);
-    background: rgba(30, 41, 59, 0.6);
+    margin-bottom: 12px;
     padding: 8px;
 
-    margin-bottom: 12px;
+    background: rgba(30, 41, 59, 0.6);
+
+    color: var(--text-muted);
+    font-size: 12px;
+
     white-space: pre-line;
 }
 
@@ -876,15 +1042,17 @@ body {
     display: grid;
     grid-template-columns: 1fr;
     gap: 6px;
+
     margin-bottom: 8px;
 }
 
 .btn-upgrade-path {
     width: 100%;
     padding: 8px 10px;
-    border: 1px solid rgba(34, 197, 94, 0.5);
 
     background: rgba(22, 163, 74, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+
     color: #dcfce7;
     font-size: 12px;
     font-weight: 800;
@@ -903,37 +1071,52 @@ body {
 }
 
 .btn-target {
+    flex: 1;
+
+    padding: 6px 10px;
+
     background: rgba(168, 85, 247, 0.2);
     border: 1px solid var(--accent-purple);
+
     color: var(--accent-purple);
-    padding: 6px 10px;
     font-size: 12px;
     font-weight: 700;
-    cursor: pointer;
-    flex: 1;
     text-align: center;
+    cursor: pointer;
 }
-.btn-target:hover { background: rgba(168, 85, 247, 0.4); }
+
+.btn-target:hover {
+    background: rgba(168, 85, 247, 0.4);
+}
 
 .btn-upgrade {
     flex: 1;
+
+    padding: 8px 12px;
+
     background: linear-gradient(135deg, #16a34a, #22c55e);
     border: none;
-    color: #fff;
-    padding: 8px 12px;
-    font-weight: 800;
+
+    color: white;
     font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
 }
-.btn-upgrade:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-upgrade:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 
 .btn-sell {
+    padding: 8px 12px;
+
     background: linear-gradient(135deg, #dc2626, #ef4444);
     border: none;
-    color: #fff;
-    padding: 8px 12px;
-    font-weight: 800;
+
+    color: white;
     font-size: 13px;
+    font-weight: 800;
     cursor: pointer;
 }
 
