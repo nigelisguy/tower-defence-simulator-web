@@ -89,7 +89,7 @@ const DIFFICULTIES = {
         color: '#22c55e',
         waves: 20,
         baseHp: 100,
-        startCash: 700,
+        startCash: 600,
         hpMult: 0.8,
         rewardCoins: 250,
         rewardXp: 150,
@@ -101,7 +101,7 @@ const DIFFICULTIES = {
         color: '#06b6d4',
         waves: 25,
         baseHp: 125,
-        startCash: 850,
+        startCash: 600,
         hpMult: 0.9,
         rewardCoins: 400,
         rewardXp: 250,
@@ -125,7 +125,7 @@ const DIFFICULTIES = {
         color: '#f97316',
         waves: 40,
         baseHp: 100,
-        startCash: 500,
+        startCash: 700,
         hpMult: 1.35,
         rewardCoins: 1000,
         rewardXp: 750,
@@ -137,7 +137,7 @@ const DIFFICULTIES = {
         color: '#a855f7',
         waves: 40,
         baseHp: 100,
-        startCash: 500,
+        startCash: 800,
         hpMult: 1.65,
         rewardCoins: 1500,
         rewardGems: 1,
@@ -150,12 +150,38 @@ const DIFFICULTIES = {
         color: '#38bdf8',
         waves: 40,
         baseHp: 100,
-        startCash: 500,
+        startCash: 900,
         hpMult: 1.5,
         rewardCoins: 1300,
         rewardGems: 5,
         rewardXp: 1000,
         desc: 'frosty experience'
+    },
+    hardcore: {
+        id: 'hardcore',
+        name: 'Hardcore',
+        color: '#883CA6',
+        waves: 40,
+        baseHp: 100,
+        startCash: 1200,
+        hpMult: 2,
+        rewardCoins: 2500,
+        rewardGems: 25,
+        rewardXp: 2000,
+        desc: 'only for the best'
+    },
+    voidcore: {
+        id: 'voidcore',
+        name: 'Voidcore',
+        color: '#883CA6',
+        waves: 40,
+        baseHp: 100,
+        startCash: 1200,
+        hpMult: 2.5,
+        rewardCoins: 5000,
+        rewardGems: 50,
+        rewardXp: 5000,
+        desc: 'only for the best of the best...'
     }
 };
 
@@ -683,43 +709,756 @@ const PROMO_CODES = {
 };
 
 const BASE_ENEMIES = {
-  //basic
-  normal: { name: 'Normal', hp: 5, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
-  abnormal: { name: 'Abnormal', hp: 8, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
-  frostnormal: { name: 'Frost', hp: 12, speed: 75, reward: 10, color: '#e2e8f0', size: 14, hidden: false, flying: false, lead: false },
-  //fast
-  quick: { name: 'Quick', hp: 10, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
-  quickabnormal: { name: 'Quick Abnormal', hp: 14, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
-  frostrunner: { name: 'Snowy', hp: 18, speed: 120, reward: 12, color: '#facc15', size: 12, hidden: false, flying: false, lead: false },
-  //tanky
-  slow: { name: 'Heavy', hp: 50, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
-  molten: { name: 'Molten', hp: 40, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
-  snowman: { name: 'Snowman', hp: 100, speed: 45, reward: 25, color: '#64748b', size: 19, hidden: false, flying: false, lead: false },
-  //1stboss
-  abnormal: { name: 'Elite Abnormal', hp: 500, speed: 35, reward: 500, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: false },
-  frost: { name: 'Snow Golem', hp: 600, speed: 35, reward: 600, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: false },
-  //gimmicky/detections until 2ndboss enemies
-  hidden: { name: 'Hidden', hp: 20, speed: 95, reward: 20, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
-  flying: { name: 'Balloon', hp: 28, speed: 110, reward: 30, color: '#38bdf8', size: 15, hidden: false, flying: true, lead: false },
-  lead: { name: 'Lead', hp: 80, speed: 50, reward: 40, color: '#475569', size: 18, hidden: false, flying: false, lead: true },
-  yeti: { name: 'Yeti', hp: 200, speed: 200, reward: 50, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
-  mist: { name: 'Cold Mist', hp: 250, speed: 95, reward: 200, color: '#78716c', size: 13, hidden: true, flying: false, lead: false },
-  invader: { name: 'Lead', hp: 80, speed: 50, reward: 30, color: '#475569', size: 18, hidden: false, flying: false, lead: true },
-  angle: { name: 'Frost Angel', hp: 250, speed: 70, reward: 250, color: '#475569', size: 18, hidden: false, flying: true, lead: false },
-  tank: { name: 'Tank', hp: 200, speed: 40, reward: 200, color: '#475569', size: 18, hidden: false, flying: false, lead: false },
-  //unused
-  hidden_flying: { name: 'Phantom Fleet', hp: 35, speed: 115, reward: 35, color: '#a855f7', size: 14, hidden: true, flying: true, lead: false },
-  lead_flying: { name: 'Blimp', hp: 160, speed: 65, reward: 60, color: '#334155', size: 20, hidden: false, flying: true, lead: true },
-  //here comes the splitters
-  splitter4: { name: 'Splitter (Layer 4)', hp: 500, speed: 35, reward: 500, color: '#a774ad', size: 40, hidden: false, flying: false, lead: false },
-  splitter3: { name: 'Splitter (Layer 3)', hp: 350, speed: 45, reward: 200, color: '#a774ad', size: 30, hidden: false, flying: false, lead: false },
-  splitter4: { name: 'Splitter (Layer 2)', hp: 200, speed: 65, reward: 100, color: '#a774ad', size: 25, hidden: false, flying: false, lead: false },
-  splitter4: { name: 'Splitter (Layer 1)', hp: 50, speed: 85, reward: 50, color: '#a774ad', size: 20, hidden: false, flying: false, lead: false },
-  splitter4: { name: 'Splitter', hp: 50, speed: 95, reward: 10, color: '#a774ad', size: 20, hidden: false, flying: false, lead: false },
-  //2nd/final boss for 1st-2nd gamemodes
-  giant_boss: { name: 'Brute', hp: 10000, speed: 35, reward: 20000, color: '#ef4444', size: 26, hidden: false, flying: false, lead: false, boss: true },
-  molten_boss: { name: 'Molten Core Boss', hp: 3500, speed: 30, reward: 800, color: '#f97316', size: 32, hidden: false, flying: false, lead: true, boss: true },
-  fallen_king: { name: 'Fallen King', hp: 7500, speed: 28, reward: 1500, color: '#9333ea', size: 36, hidden: false, flying: false, lead: true, boss: true },
-  //idk
-  frost_hero: { name: 'Frost Titan', hp: 5500, speed: 32, reward: 1200, color: '#0284c7', size: 34, hidden: false, flying: false, lead: true, boss: true }
+    // =========================================================
+    // BASIC
+    // =========================================================
+    normal: {
+        name: 'Normal',
+        hp: 5, speed: 75, reward: 10,
+        color: '#e2e8f0', size: 14,
+        hidden: false, flying: false, lead: false
+    },
+
+    abnormal: {
+        name: 'Abnormal',
+        hp: 8, speed: 75, reward: 10,
+        color: '#cbd5e1', size: 14,
+        hidden: false, flying: false, lead: false
+    },
+
+    speedy: {
+        name: 'Speedy',
+        hp: 10, speed: 120, reward: 12,
+        color: '#facc15', size: 12,
+        hidden: false, flying: false, lead: false
+    },
+
+    quick: {
+        name: 'Quick',
+        hp: 12, speed: 130, reward: 12,
+        color: '#facc15', size: 12,
+        hidden: false, flying: false, lead: false
+    },
+
+    slow: {
+        name: 'Slow',
+        hp: 50, speed: 45, reward: 25,
+        color: '#64748b', size: 19,
+        hidden: false, flying: false, lead: false
+    },
+
+    heavy: {
+        name: 'Heavy',
+        hp: 80, speed: 42, reward: 30,
+        color: '#475569', size: 20,
+        hidden: false, flying: false, lead: false
+    },
+
+    abnormal_heavy: {
+        name: 'Heavy Abnormal',
+        hp: 110, speed: 48, reward: 35,
+        color: '#64748b', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    // =========================================================
+    // BOSS / MINI-BOSS
+    // =========================================================
+    normal_boss: {
+        name: 'Normal Boss',
+        hp: 250, speed: 35, reward: 150,
+        color: '#ef4444', size: 24,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    elite_abnormal: {
+        name: 'Elite Abnormal',
+        hp: 500, speed: 35, reward: 500,
+        color: '#ef4444', size: 26,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    slow_boss: {
+        name: 'Slow Boss',
+        hp: 1000, speed: 25, reward: 700,
+        color: '#991b1b', size: 30,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    hidden_boss: {
+        name: 'Hidden Boss',
+        hp: 1500, speed: 32, reward: 900,
+        color: '#57534e', size: 30,
+        hidden: true, flying: false, lead: false, boss: true
+    },
+
+    speedy_boss: {
+        name: 'Speedy Boss',
+        hp: 1200, speed: 75, reward: 900,
+        color: '#eab308', size: 25,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    giant_boss: {
+        name: 'Giant Boss',
+        hp: 10000, speed: 35, reward: 20000,
+        color: '#ef4444', size: 38,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    fallen_king: {
+        name: 'Fallen King',
+        hp: 7500, speed: 28, reward: 1500,
+        color: '#9333ea', size: 36,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    // =========================================================
+    // DETECTION
+    // =========================================================
+    hidden: {
+        name: 'Hidden',
+        hp: 20, speed: 95, reward: 20,
+        color: '#78716c', size: 13,
+        hidden: true, flying: false, lead: false
+    },
+
+    hidden_boss_unit: {
+        name: 'Hidden Boss',
+        hp: 350, speed: 45, reward: 100,
+        color: '#57534e', size: 22,
+        hidden: true, flying: false, lead: false
+    },
+
+    lead: {
+        name: 'Lead',
+        hp: 80, speed: 50, reward: 40,
+        color: '#475569', size: 18,
+        hidden: false, flying: false, lead: true
+    },
+
+    elite_lead: {
+        name: 'Elite Lead',
+        hp: 180, speed: 55, reward: 80,
+        color: '#334155', size: 21,
+        hidden: false, flying: false, lead: true
+    },
+
+    // =========================================================
+    // FLYING
+    // =========================================================
+    flying: {
+        name: 'Balloon',
+        hp: 28, speed: 110, reward: 30,
+        color: '#38bdf8', size: 15,
+        hidden: false, flying: true, lead: false
+    },
+
+    lead_flying: {
+        name: 'Lead Balloon',
+        hp: 160, speed: 65, reward: 60,
+        color: '#334155', size: 20,
+        hidden: false, flying: true, lead: true
+    },
+
+    hidden_flying: {
+        name: 'Phantom',
+        hp: 35, speed: 115, reward: 35,
+        color: '#a855f7', size: 14,
+        hidden: true, flying: true, lead: false
+    },
+
+    // =========================================================
+    // BREAKERS
+    // =========================================================
+    breaker: {
+        name: 'Breaker',
+        hp: 100, speed: 80, reward: 35,
+        color: '#fb7185', size: 18,
+        hidden: false, flying: false, lead: false
+    },
+
+    breaker2: {
+        name: 'Breaker2',
+        hp: 160, speed: 75, reward: 50,
+        color: '#f43f5e', size: 20,
+        hidden: false, flying: false, lead: false
+    },
+
+    breaker3: {
+        name: 'Breaker3',
+        hp: 300, speed: 70, reward: 75,
+        color: '#e11d48', size: 23,
+        hidden: false, flying: false, lead: false
+    },
+
+    breaker4: {
+        name: 'Breaker4',
+        hp: 500, speed: 65, reward: 100,
+        color: '#be123c', size: 26,
+        hidden: false, flying: false, lead: false
+    },
+
+    // =========================================================
+    // SUPPORT / SUMMONERS
+    // =========================================================
+    necromancer: {
+        name: 'Necromancer',
+        hp: 350, speed: 40, reward: 100,
+        color: '#7e22ce', size: 22,
+        hidden: false, flying: false, lead: false
+    },
+
+    skeleton: {
+        name: 'Skeleton',
+        hp: 35, speed: 75, reward: 8,
+        color: '#f5f5f4', size: 13,
+        hidden: false, flying: false, lead: false
+    },
+
+    mystery: {
+        name: 'Mystery',
+        hp: 120, speed: 70, reward: 50,
+        color: '#8b5cf6', size: 18,
+        hidden: false, flying: false, lead: false
+    },
+
+    mystery_boss: {
+        name: 'Mystery Boss',
+        hp: 1000, speed: 35, reward: 400,
+        color: '#6d28d9', size: 28,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    mystery_summoner: {
+        name: 'Mystery Summoner',
+        hp: 2500, speed: 30, reward: 700,
+        color: '#581c87', size: 32,
+        hidden: false, flying: false, lead: false, boss: true
+    },
+
+    // =========================================================
+    // ARMOR / HAZMAT
+    // =========================================================
+    armored: {
+        name: 'Armored',
+        hp: 150, speed: 50, reward: 50,
+        color: '#64748b', size: 19,
+        hidden: false, flying: false, lead: true
+    },
+
+    hazmat: {
+        name: 'Hazmat',
+        hp: 250, speed: 55, reward: 75,
+        color: '#84cc16', size: 20,
+        hidden: false, flying: false, lead: false
+    },
+
+    elite_hazmat: {
+        name: 'Elite Hazmat',
+        hp: 600, speed: 50, reward: 150,
+        color: '#65a30d', size: 24,
+        hidden: false, flying: false, lead: false
+    },
+
+    // =========================================================
+    // MOLten
+    // =========================================================
+    molten: {
+        name: 'Molten',
+        hp: 300, speed: 50, reward: 75,
+        color: '#f97316', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    molten_demon: {
+        name: 'Molten Demon',
+        hp: 500, speed: 60, reward: 100,
+        color: '#dc2626', size: 23,
+        hidden: false, flying: false, lead: false
+    },
+
+    molten_golem: {
+        name: 'Molten Golem',
+        hp: 1000, speed: 35, reward: 200,
+        color: '#ea580c', size: 28,
+        hidden: false, flying: false, lead: false
+    },
+
+    molten_necromancer: {
+        name: 'Molten Necromancer',
+        hp: 1200, speed: 35, reward: 250,
+        color: '#c2410c', size: 26,
+        hidden: false, flying: false, lead: false
+    },
+
+    molten_hound: {
+        name: 'Molten Hound',
+        hp: 750, speed: 90, reward: 180,
+        color: '#f97316', size: 18,
+        hidden: false, flying: false, lead: false
+    },
+
+    molten_mech: {
+        name: 'Molten Mech',
+        hp: 2000, speed: 28, reward: 400,
+        color: '#9a3412', size: 30,
+        hidden: false, flying: false, lead: true
+    },
+
+    molten_titan: {
+        name: 'Molten Titan',
+        hp: 5000, speed: 25, reward: 1000,
+        color: '#ea580c', size: 36,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    molten_boss: {
+        name: 'Molten Boss',
+        hp: 3500, speed: 30, reward: 800,
+        color: '#f97316', size: 32,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    // =========================================================
+    // FALLEN
+    // =========================================================
+    fallen_squire: {
+        name: 'Fallen Squire',
+        hp: 100, speed: 70, reward: 25,
+        color: '#64748b', size: 15,
+        hidden: false, flying: false, lead: false
+    },
+
+    fallen_soul: {
+        name: 'Fallen Soul',
+        hp: 150, speed: 100, reward: 40,
+        color: '#a78bfa', size: 15,
+        hidden: true, flying: true, lead: false
+    },
+
+    fallen_hazmat: {
+        name: 'Fallen Hazmat',
+        hp: 350, speed: 60, reward: 100,
+        color: '#4d7c0f', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    fallen: {
+        name: 'Fallen',
+        hp: 450, speed: 85, reward: 120,
+        color: '#14b8a6', size: 20,
+        hidden: false, flying: false, lead: false
+    },
+
+    fallen_giant: {
+        name: 'Fallen Giant',
+        hp: 1200, speed: 45, reward: 250,
+        color: '#0f766e', size: 29,
+        hidden: false, flying: false, lead: false
+    },
+
+    fallen_hero: {
+        name: 'Fallen Hero',
+        hp: 2500, speed: 38, reward: 500,
+        color: '#7c3aed', size: 31,
+        hidden: false, flying: false, lead: true
+    },
+
+    fallen_tank: {
+        name: 'Fallen Tank',
+        hp: 3500, speed: 30, reward: 600,
+        color: '#334155', size: 32,
+        hidden: false, flying: false, lead: true
+    },
+
+    fallen_guardian: {
+        name: 'Fallen Guardian',
+        hp: 5000, speed: 25, reward: 800,
+        color: '#312e81', size: 35,
+        hidden: false, flying: false, lead: true
+    },
+
+    // =========================================================
+    // GOLDEN
+    // =========================================================
+    golden: {
+        name: 'Golden',
+        hp: 300, speed: 70, reward: 100,
+        color: '#fbbf24', size: 19,
+        hidden: false, flying: false, lead: false
+    },
+
+    shadow: {
+        name: 'Shadow',
+        hp: 200, speed: 100, reward: 75,
+        color: '#1e1b4b', size: 16,
+        hidden: true, flying: false, lead: false
+    },
+
+    charge: {
+        name: 'Charge',
+        hp: 500, speed: 115, reward: 150,
+        color: '#eab308', size: 18,
+        hidden: false, flying: false, lead: false
+    },
+
+    tank: {
+        name: 'Tank',
+        hp: 2000, speed: 40, reward: 400,
+        color: '#475569', size: 28,
+        hidden: false, flying: false, lead: true
+    },
+
+    gold_guard: {
+        name: 'Gold Guard',
+        hp: 1500, speed: 50, reward: 500,
+        color: '#ca8a04', size: 25,
+        hidden: false, flying: false, lead: true
+    },
+
+    gold_titan: {
+        name: 'Gold Titan',
+        hp: 6000, speed: 27, reward: 1200,
+        color: '#eab308', size: 37,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    // =========================================================
+    // POLLUTED WASTELAND / SPECIAL
+    // =========================================================
+    wastewalker: {
+        name: 'Wastewalker',
+        hp: 300, speed: 65, reward: 75,
+        color: '#78716c', size: 19,
+        hidden: false, flying: false, lead: false
+    },
+
+    wasterunner: {
+        name: 'Wasterunner',
+        hp: 180, speed: 110, reward: 60,
+        color: '#84cc16', size: 15,
+        hidden: false, flying: false, lead: false
+    },
+
+    hazardous: {
+        name: 'Hazardous',
+        hp: 600, speed: 55, reward: 150,
+        color: '#65a30d', size: 23,
+        hidden: false, flying: false, lead: false
+    },
+
+    super_mutant: {
+        name: 'Super Mutant',
+        hp: 1200, speed: 45, reward: 300,
+        color: '#166534', size: 27,
+        hidden: false, flying: false, lead: false
+    },
+
+    lurker: {
+        name: 'Lurker',
+        hp: 500, speed: 80, reward: 130,
+        color: '#3f3f46', size: 18,
+        hidden: true, flying: false, lead: false
+    },
+
+    toxic: {
+        name: 'Toxic',
+        hp: 800, speed: 60, reward: 180,
+        color: '#22c55e', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    splitter: {
+        name: 'Splitter',
+        hp: 200, speed: 65, reward: 100,
+        color: '#a774ad', size: 25,
+        hidden: false, flying: false, lead: false
+    },
+
+    splitter_layer1: {
+        name: 'Splitter (Layer 1)',
+        hp: 50, speed: 85, reward: 50,
+        color: '#a774ad', size: 20,
+        hidden: false, flying: false, lead: false
+    },
+
+    splitter_layer2: {
+        name: 'Splitter (Layer 2)',
+        hp: 200, speed: 65, reward: 100,
+        color: '#a774ad', size: 25,
+        hidden: false, flying: false, lead: false
+    },
+
+    splitter_layer3: {
+        name: 'Splitter (Layer 3)',
+        hp: 350, speed: 45, reward: 200,
+        color: '#a774ad', size: 30,
+        hidden: false, flying: false, lead: false
+    },
+
+    splitter_layer4: {
+        name: 'Splitter (Layer 4)',
+        hp: 500, speed: 35, reward: 500,
+        color: '#a774ad', size: 40,
+        hidden: false, flying: false, lead: false
+    },
+
+    fleshling: {
+        name: 'Fleshling',
+        hp: 400, speed: 70, reward: 100,
+        color: '#be123c', size: 18,
+        hidden: false, flying: false, lead: false
+    },
+
+    amalgamation: {
+        name: 'Amalgamation',
+        hp: 2500, speed: 35, reward: 600,
+        color: '#881337', size: 32,
+        hidden: false, flying: false, lead: false
+    },
+
+    circuit: {
+        name: 'Circuit',
+        hp: 1000, speed: 75, reward: 250,
+        color: '#06b6d4', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    rusher: {
+        name: 'Rusher',
+        hp: 350, speed: 130, reward: 120,
+        color: '#f43f5e', size: 16,
+        hidden: false, flying: false, lead: false
+    },
+
+    goo: {
+        name: 'Goo',
+        hp: 700, speed: 45, reward: 180,
+        color: '#84cc16', size: 23,
+        hidden: false, flying: false, lead: false
+    },
+
+    abomination: {
+        name: 'Abomination',
+        hp: 4000, speed: 35, reward: 900,
+        color: '#7f1d1d', size: 35,
+        hidden: false, flying: false, lead: true
+    },
+
+    warden: {
+        name: 'Warden',
+        hp: 5000, speed: 30, reward: 1000,
+        color: '#1f2937', size: 34,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    nuclear_guardian: {
+        name: 'Nuclear Guardian',
+        hp: 10000, speed: 25, reward: 2500,
+        color: '#16a34a', size: 40,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    nuclear_monster: {
+        name: 'Nuclear Monster',
+        hp: 25000, speed: 22, reward: 5000,
+        color: '#15803d', size: 45,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    // =========================================================
+    // HARDCORE / VOID
+    // =========================================================
+    odd: {
+        name: 'Odd',
+        hp: 15, speed: 80, reward: 10,
+        color: '#a78bfa', size: 13,
+        hidden: false, flying: false, lead: false
+    },
+
+    swift: {
+        name: 'Swift',
+        hp: 25, speed: 140, reward: 15,
+        color: '#facc15', size: 12,
+        hidden: false, flying: false, lead: false
+    },
+
+    hefty: {
+        name: 'Hefty',
+        hp: 100, speed: 45, reward: 30,
+        color: '#64748b', size: 21,
+        hidden: false, flying: false, lead: false
+    },
+
+    phantom: {
+        name: 'Phantom',
+        hp: 100, speed: 115, reward: 40,
+        color: '#8b5cf6', size: 15,
+        hidden: true, flying: false, lead: false
+    },
+
+    voidling: {
+        name: 'Voidling',
+        hp: 400, speed: 90, reward: 100,
+        color: '#4c1d95', size: 19,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_reaper: {
+        name: 'Void Reaper',
+        hp: 1500, speed: 75, reward: 400,
+        color: '#6d28d9', size: 25,
+        hidden: true, flying: false, lead: false
+    },
+
+    elite_phantom: {
+        name: 'Elite Phantom',
+        hp: 800, speed: 125, reward: 250,
+        color: '#7c3aed', size: 19,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_rusher: {
+        name: 'Void Rusher',
+        hp: 700, speed: 150, reward: 200,
+        color: '#9333ea', size: 17,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_pike: {
+        name: 'Void Pike',
+        hp: 1200, speed: 85, reward: 300,
+        color: '#4f46e5', size: 20,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_titan: {
+        name: 'Void Titan',
+        hp: 5000, speed: 35, reward: 1000,
+        color: '#312e81', size: 34,
+        hidden: true, flying: false, lead: true
+    },
+
+    void_floater: {
+        name: 'Void Floater',
+        hp: 900, speed: 90, reward: 250,
+        color: '#6366f1', size: 20,
+        hidden: true, flying: true, lead: false
+    },
+
+    void_brute: {
+        name: 'Void Brute',
+        hp: 3500, speed: 40, reward: 800,
+        color: '#581c87', size: 31,
+        hidden: true, flying: false, lead: true
+    },
+
+    nightshade: {
+        name: 'Nightshade',
+        hp: 1200, speed: 100, reward: 300,
+        color: '#171717', size: 19,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_keeper: {
+        name: 'Void Keeper',
+        hp: 2500, speed: 45, reward: 600,
+        color: '#4338ca', size: 29,
+        hidden: true, flying: false, lead: true
+    },
+
+    soul: {
+        name: 'Soul',
+        hp: 1000, speed: 115, reward: 250,
+        color: '#c4b5fd', size: 15,
+        hidden: true, flying: true, lead: false
+    },
+
+    void_cultist: {
+        name: 'Void Cultist',
+        hp: 1800, speed: 50, reward: 500,
+        color: '#581c87', size: 23,
+        hidden: true, flying: false, lead: false
+    },
+
+    heavy_voidling: {
+        name: 'Heavy Voidling',
+        hp: 3000, speed: 50, reward: 700,
+        color: '#3b0764', size: 27,
+        hidden: true, flying: false, lead: true
+    },
+
+    elite_soul: {
+        name: 'Elite Soul',
+        hp: 3000, speed: 130, reward: 750,
+        color: '#ddd6fe', size: 18,
+        hidden: true, flying: true, lead: false
+    },
+
+    void_knight: {
+        name: 'Void Knight',
+        hp: 4500, speed: 60, reward: 900,
+        color: '#1e1b4b', size: 30,
+        hidden: true, flying: false, lead: true
+    },
+
+    void_trickster: {
+        name: 'Void Trickster',
+        hp: 2500, speed: 100, reward: 700,
+        color: '#7e22ce', size: 22,
+        hidden: true, flying: false, lead: false
+    },
+
+    void_swordmaster: {
+        name: 'Void Swordmaster',
+        hp: 5000, speed: 55, reward: 1000,
+        color: '#3730a3', size: 30,
+        hidden: true, flying: false, lead: true
+    },
+
+    void_guardian: {
+        name: 'Void Guardian',
+        hp: 8000, speed: 35, reward: 1500,
+        color: '#312e81', size: 36,
+        hidden: true, flying: false, lead: true, boss: true
+    },
+
+    void_reaver: {
+        name: 'Void Reaver',
+        hp: 20000, speed: 25, reward: 5000,
+        color: '#4c1d95', size: 44,
+        hidden: true, flying: false, lead: true, boss: true
+    },
+
+    void_eye: {
+        name: 'Void Eye',
+        hp: 30000, speed: 20, reward: 7500,
+        color: '#7e22ce', size: 42,
+        hidden: true, flying: true, lead: true, boss: true
+    },
+
+    // =========================================================
+    // OTHER BOSSES
+    // =========================================================
+    frost_titan: {
+        name: 'Frost Titan',
+        hp: 5500, speed: 32, reward: 1200,
+        color: '#0284c7', size: 34,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    patient_zero: {
+        name: 'Patient Zero',
+        hp: 7500, speed: 30, reward: 1500,
+        color: '#65a30d', size: 36,
+        hidden: false, flying: false, lead: true, boss: true
+    },
+
+    molten_warlord: {
+        name: 'Molten Warlord',
+        hp: 12000, speed: 25, reward: 2500,
+        color: '#b91c1c', size: 40,
+        hidden: false, flying: false, lead: true, boss: true
+    }
 };

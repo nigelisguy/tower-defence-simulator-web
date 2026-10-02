@@ -119,6 +119,16 @@ class AssetManager {
             'menu_frost',
             'assets/ui/menu buttons/normal/frost.svg'
         );
+        this.add(
+            assetList,
+            'menu_hardcore',
+            'assets/ui/menu buttons/normal/hardcore.svg'
+        );
+        this.add(
+            assetList,
+            'menu_voidcore',
+            'assets/ui/menu buttons/normal/voidcore.svg'
+        );
 
         // =========================================================
         // TOWER CARDS
