@@ -125,27 +125,49 @@ class GameEngine {
     }
 
     initEvents() {
-        this.canvas.addEventListener('mousemove', (e) => {
-            const rect = this.canvas.getBoundingClientRect();
+      this.canvas.addEventListener('mousemove', (e) => {
+          const rect = this.canvas.getBoundingClientRect();
 
-            // Convert browser coordinates to actual canvas coordinates.
-            const screenX =
-                (e.clientX - rect.left) *
-                (this.canvas.width / rect.width);
+          // The canvas is displayed with object-fit: contain,
+          // so calculate the ACTUAL visible drawing area.
+          const canvasAspect = this.canvas.width / this.canvas.height;
+          const rectAspect = rect.width / rect.height;
 
-            const screenY =
-                (e.clientY - rect.top) *
-                (this.canvas.height / rect.height);
+          let displayedWidth;
+          let displayedHeight;
+          let offsetX;
+          let offsetY;
 
-            // Convert screen coordinates -> world/map coordinates.
-            this.mouseX =
-                this.camera.x +
-                screenX / this.camera.zoom;
+          if (rectAspect > canvasAspect) {
+              // Letterboxed left/right.
+              displayedHeight = rect.height;
+              displayedWidth = displayedHeight * canvasAspect;
+              offsetX = (rect.width - displayedWidth) / 2;
+              offsetY = 0;
+          } else {
+              // Letterboxed top/bottom.
+              displayedWidth = rect.width;
+              displayedHeight = displayedWidth / canvasAspect;
+              offsetX = 0;
+              offsetY = (rect.height - displayedHeight) / 2;
+          }
 
-            this.mouseY =
-                this.camera.y +
-                screenY / this.camera.zoom;
+          // Mouse position inside the actual rendered canvas.
+          const screenX =
+              (e.clientX - rect.left - offsetX) *
+              (this.canvas.width / displayedWidth);
 
+          const screenY =
+              (e.clientY - rect.top - offsetY) *
+              (this.canvas.height / displayedHeight);
+
+          this.mouseX =
+              this.camera.x +
+              screenX / this.camera.zoom;
+
+          this.mouseY =
+              this.camera.y +
+              screenY / this.camera.zoom;
             // -----------------------------------------
             // ENEMY HOVER
             // -----------------------------------------
